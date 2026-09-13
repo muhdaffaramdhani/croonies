@@ -309,26 +309,58 @@ document.getElementById('drawerCheckoutBtn').addEventListener('click', goToCheck
 document.getElementById('closeCheckoutBtn').addEventListener('click', closeCheckout);
 checkoutOverlay.addEventListener('click', closeCheckout);
 
-// Flatpickr for home page modal date
+// Flatpickr for home page modal date & time
 const homePickupDateInput = document.getElementById('pickupDate');
+const homePickupTimeInput = document.getElementById('pickupTime');
 let fpHomePickupDate = null;
-if (homePickupDateInput && window.flatpickr) {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDateStr = tomorrow.toISOString().split('T')[0];
-  fpHomePickupDate = flatpickr(homePickupDateInput, {
-    locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.id) ? window.flatpickr.l10ns.id : 'id',
-    dateFormat: 'Y-m-d',
-    altInput: true,
-    altFormat: 'd/m/Y',
-    altInputClass: 'flatpickr-custom-input',
-    minDate: minDateStr,
-    placeholder: 'dd/mm/yyyy',
-    disableMobile: true,
-    monthSelectorType: 'static',
-    allowInput: true
-  });
-  fpHomePickupDate.clear();
+let fpHomePickupTime = null;
+
+if (window.flatpickr) {
+  if (homePickupDateInput) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDateStr = tomorrow.toISOString().split('T')[0];
+    fpHomePickupDate = flatpickr(homePickupDateInput, {
+      locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.id) ? window.flatpickr.l10ns.id : 'id',
+      dateFormat: 'Y-m-d',
+      altInput: true,
+      altFormat: 'd/m/Y',
+      altInputClass: 'flatpickr-custom-input',
+      minDate: minDateStr,
+      placeholder: 'dd/mm/yyyy',
+      disableMobile: true,
+      monthSelectorType: 'static',
+      allowInput: true,
+      onReady: function(selectedDates, dateStr, instance) {
+        if (instance.currentYearElement) {
+          instance.currentYearElement.disabled = true;
+          instance.currentYearElement.tabIndex = -1;
+        }
+      },
+      onMonthChange: function(selectedDates, dateStr, instance) {
+        if (instance.currentYearElement) {
+          instance.currentYearElement.disabled = true;
+          instance.currentYearElement.tabIndex = -1;
+        }
+      }
+    });
+    fpHomePickupDate.clear();
+  }
+
+  if (homePickupTimeInput) {
+    fpHomePickupTime = flatpickr(homePickupTimeInput, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      time_24hr: true,
+      minTime: '08:00',
+      maxTime: '16:00',
+      minuteIncrement: 15,
+      defaultDate: '10:00',
+      disableMobile: true,
+      allowInput: true
+    });
+  }
 }
 
 // ---------- Order submit -> receipt ----------

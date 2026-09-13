@@ -278,10 +278,11 @@ function handlePickupMethodChange(){
 }
 if (methodAmbil) methodAmbil.addEventListener('change', handlePickupMethodChange);
 if (methodDelivery) methodDelivery.addEventListener('change', handlePickupMethodChange);
-
 let fpPickupDate = null;
+let fpPickupTime = null;
+const pickupTimeInput = document.getElementById('pickupTime');
 
-// Minimum date = tomorrow (kosong tanpa default, format dd/mm/yyyy)
+// Minimum date = tomorrow (kosong tanpa default, format dd/mm/yyyy) & Time 24hr format
 function initDateConstraint(){
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -300,13 +301,41 @@ function initDateConstraint(){
         placeholder: 'dd/mm/yyyy',
         disableMobile: true,
         monthSelectorType: 'static',
-        allowInput: true
+        allowInput: true,
+        onReady: function(selectedDates, dateStr, instance) {
+          if (instance.currentYearElement) {
+            instance.currentYearElement.disabled = true;
+            instance.currentYearElement.tabIndex = -1;
+          }
+        },
+        onMonthChange: function(selectedDates, dateStr, instance) {
+          if (instance.currentYearElement) {
+            instance.currentYearElement.disabled = true;
+            instance.currentYearElement.tabIndex = -1;
+          }
+        }
       });
     } else {
       fpPickupDate.set('minDate', minDateStr);
     }
     // Kosongkan nilai tanggal (hilangkan default)
     fpPickupDate.clear();
+
+    // Time picker 24 jam Flatpickr
+    if (pickupTimeInput && !fpPickupTime) {
+      fpPickupTime = flatpickr(pickupTimeInput, {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        time_24hr: true,
+        minTime: '08:00',
+        maxTime: '16:00',
+        minuteIncrement: 15,
+        defaultDate: '10:00',
+        disableMobile: true,
+        allowInput: true
+      });
+    }
   } else {
     pickupDateInput.value = '';
   }
