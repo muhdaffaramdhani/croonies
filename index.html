@@ -328,9 +328,9 @@
     <button class="close-btn receipt-modal-close" id="closeReceiptBtn" aria-label="Tutup">&times;</button>
     
     <div class="receipt-layout">
-      <!-- Sisi Kiri: Struk Portait (Sesuai Referensi) -->
+      <!-- Sisi Kiri: Struk Portait (Hasil Generate Image Langsung) -->
       <div class="receipt-col-left">
-        <div class="receipt-ticket" id="receiptContent"></div>
+        <div class="receipt-preview-container" id="receiptContent"></div>
       </div>
 
       <!-- Sisi Kanan: Info & Tombol Aksi -->
@@ -371,6 +371,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Hidden staging template for generating the unconstrained receipt image -->
+  <div id="receiptTicketTemplate" class="receipt-ticket receipt-render-staging" aria-hidden="true"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="script.js"></script>

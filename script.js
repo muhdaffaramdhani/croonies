@@ -327,20 +327,29 @@ orderForm.addEventListener('submit', e => {
   closeCheckout();
   receiptModal.classList.add('show');
   receiptOverlay.classList.add('show');
-
-  // Otomatis simpan & salin foto struk untuk dilampirkan
-  setTimeout(() => {
-    captureAndSaveReceipt(lastOrder, false);
-  }, 120);
-
   sendToWhatsApp(lastOrder);
 });
 
+let currentReceiptDataUrl = null;
+
 function renderReceipt(order){
-  receiptContent.innerHTML = `
+  const template = document.getElementById('receiptTicketTemplate');
+  const previewContainer = document.getElementById('receiptContent');
+  if (!template || !previewContainer) return;
+
+  // 1. Tampilkan state loading sebelum gambar selesai di-generate
+  previewContainer.innerHTML = `
+    <div class="receipt-loading-box">
+      <div class="spinner"></div>
+      <span>Membuat struk pesanan...</span>
+    </div>
+  `;
+
+  // 2. Render tiket di staging template unconstrained (tidak dibatasi height atau overflow)
+  template.innerHTML = `
     <div class="ticket-header">
       <div class="ticket-check-circle">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       </div>
@@ -409,6 +418,50 @@ function renderReceipt(order){
       <span class="ticket-footer-ig">@croonies.id</span>
     </div>
   `;
+
+  // 3. Generate image dengan html2canvas (beri jeda mikro agar DOM template siap)
+  setTimeout(() => {
+    html2canvas(template, {
+      backgroundColor: '#FFFFFF',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    }).then(canvas => {
+      currentReceiptDataUrl = canvas.toDataURL('image/png');
+
+      // Tampilkan GAMBAR HASIL GENERATE LANGSUNG di modal website (BUKAN DOM JS)
+      previewContainer.innerHTML = `
+        <img src="${currentReceiptDataUrl}" alt="Struk Pesanan ${order.orderCode}" class="receipt-img-display" />
+      `;
+
+      // Otomatis download file gambar struk
+      downloadReceiptFile(order);
+
+      // Coba salin ke clipboard jika didukung
+      if (navigator.clipboard && window.ClipboardItem) {
+        canvas.toBlob(blob => {
+          if (blob) {
+            navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]).catch(() => {});
+          }
+        }, 'image/png');
+      }
+    }).catch(err => {
+      console.warn('Gagal render canvas struk:', err);
+      previewContainer.innerHTML = `<div style="color:var(--brown);font-size:13px;padding:24px;text-align:center;">Gagal memuat preview struk. Silakan coba klik download ulang struk.</div>`;
+    });
+  }, 70);
+}
+
+function downloadReceiptFile(order){
+  if (!currentReceiptDataUrl) return;
+  const link = document.createElement('a');
+  link.download = `receipt-${order ? order.orderCode : 'croonies'}.png`;
+  link.href = currentReceiptDataUrl;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 document.getElementById('closeReceiptBtn').addEventListener('click', () => {
@@ -416,39 +469,13 @@ document.getElementById('closeReceiptBtn').addEventListener('click', () => {
   receiptOverlay.classList.remove('show');
 });
 
-// Otomatis membuat gambar struk, men-download file PNG, dan menyalin ke clipboard
-function captureAndSaveReceipt(order, showAlertOnError = false){
-  if (!receiptContent) return Promise.resolve();
-  return html2canvas(receiptContent, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true }).then(canvas => {
-    // 1. Download file gambar struk
-    const link = document.createElement('a');
-    link.download = `struk-${order ? order.orderCode : 'croonies'}.png`;
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // 2. Coba salin ke clipboard jika didukung browser
-    if (navigator.clipboard && window.ClipboardItem) {
-      canvas.toBlob(blob => {
-        if (blob) {
-          navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob })
-          ]).catch(() => {});
-        }
-      }, 'image/png');
-    }
-  }).catch(err => {
-    console.warn('Gagal capture struk:', err);
-    if (showAlertOnError) {
-      alert('Gagal mendownload gambar struk. Coba screenshot manual struk di layar ya.');
-    }
-  });
-}
-
 // Download ulang struk tombol
 document.getElementById('downloadReceiptBtn').addEventListener('click', () => {
-  if (lastOrder) captureAndSaveReceipt(lastOrder, true);
+  if (currentReceiptDataUrl) {
+    downloadReceiptFile(lastOrder);
+  } else if (lastOrder) {
+    renderReceipt(lastOrder);
+  }
 });
 
 // Build WhatsApp message text from an order
