@@ -82,7 +82,7 @@
 
           <!-- Card 2: Data Pemesan -->
           <div class="checkout-box">
-            <div class="box-head-title" style="margin-bottom: 18px;">
+            <div class="box-head-title">
               <span class="step-badge">2</span>
               <h3>Data Pemesan</h3>
             </div>
@@ -125,7 +125,7 @@
 
           <!-- Card 3: Jadwal Pengambilan -->
           <div class="checkout-box">
-            <div class="box-head-title" style="margin-bottom: 18px;">
+            <div class="box-head-title">
               <span class="step-badge">3</span>
               <h3>Jadwal Pengambilan</h3>
             </div>
@@ -141,43 +141,43 @@
               </div>
             </div>
 
-            <div class="schedule-notice" style="margin-top: 12px;">
+            <div class="schedule-notice">
               📍 <strong>Titik Pengambilan:</strong> Kampus A UNJ Rawamangun. Hubungi WhatsApp admin Croonies jika butuh titik temu khusus di sekitar kampus.
             </div>
           </div>
 
           <!-- Card 4: Metode Pembayaran -->
           <div class="checkout-box">
-            <div class="box-head-title" style="margin-bottom: 18px;">
+            <div class="box-head-title">
               <span class="step-badge">4</span>
               <h3>Metode Pembayaran</h3>
             </div>
 
-            <div class="pay-options" style="margin-bottom: 12px;">
-              <label class="pay-option" style="flex: 1;">
+            <div class="pay-options">
+              <label class="pay-option">
                 <input type="radio" name="payMethod" value="QRIS" checked>
                 <span><strong>QRIS</strong></span>
               </label>
-              <label class="pay-option" style="flex: 1;">
+              <label class="pay-option">
                 <input type="radio" name="payMethod" value="Tunai">
-                <span><strong>Tunai</strong> (Bayar saat ambil pesanan)</span>
+                <span><strong>Tunai</strong></span>
               </label>
             </div>
 
             <!-- Dynamic DP Notice if Total >= 100k -->
-            <div class="dp-notice" id="dpAlertBox" style="display: none; margin-top: 12px;">
+            <div class="dp-notice" id="dpAlertBox" style="display: none;">
               ⚠️ <span id="dpAlertText">Pesanan Rp100.000 ke atas wajib DP minimal 50% untuk konfirmasi proses pembuatan.</span>
             </div>
           </div>
 
           <!-- Card 5: Catatan Tambahan -->
           <div class="checkout-box">
-            <div class="box-head-title" style="margin-bottom: 14px;">
+            <div class="box-head-title">
               <span class="step-badge">5</span>
               <h3>Catatan Tambahan (Opsional)</h3>
             </div>
             <div class="form-row">
-              <textarea id="notes" name="notes" rows="2"></textarea>
+              <textarea id="notes" name="notes" rows="2" placeholder="untuk bungkus cookies dan browniesnya minta dipisah ya kak, makasih"></textarea>
             </div>
           </div>
 
