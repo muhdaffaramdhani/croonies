@@ -328,6 +328,12 @@ orderForm.addEventListener('submit', e => {
   receiptModal.classList.add('show');
   receiptOverlay.classList.add('show');
   sendToWhatsApp(lastOrder);
+
+  // Kosongkan keranjang belanja setelah checkout & kirim WA
+  cart = {};
+  renderCart();
+  renderMenu();
+  orderForm.reset();
 });
 
 let currentReceiptDataUrl = null;
