@@ -432,36 +432,36 @@ body.checkout-page-body {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-top: 1px solid var(--cream-2);
-  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 9px 16px calc(9px + env(safe-area-inset-bottom, 0px));
   z-index: 50;
-  box-shadow: 0 -6px 25px rgba(59,36,21,0.08);
+  box-shadow: 0 -4px 20px rgba(59,36,21,0.08);
 }
 .mobile-checkout-bar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   max-width: 500px;
   margin: 0 auto;
 }
 .mobile-bar-pricing {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 .bar-total-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--brown);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 .bar-total-val {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--redvelvet);
 }
 .bar-dp-label {
-  font-size: 10.5px;
+  font-size: 10px;
   color: #D32F2F;
   font-weight: 600;
 }
