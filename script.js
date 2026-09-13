@@ -341,7 +341,7 @@ function buildWaMessage(o){
   msg += `\n--- Detail Pesanan ---\n${itemLines}\n`;
   msg += `\nTotal: ${formatRupiah(o.total)}\n`;
   if (o.needsDp){
-    msg += `Wajib DP minimal 50% (${formatRupiah(o.dpMinAmount)}) atau lebih, sesuai kesepakatan dengan admin.\n`;
+    msg += `Wajib DP minimal 50% (${formatRupiah(o.dpMinAmount)}) atau lebih.\n`;
   }
   if (o.notes) msg += `\nCatatan: ${o.notes}\n`;
   msg += `\nMohon konfirmasi ya, terima kasih 🙏`;
