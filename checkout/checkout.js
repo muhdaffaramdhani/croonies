@@ -551,29 +551,70 @@ function downloadReceiptFile(order){
   document.body.removeChild(link);
 }
 
+// Helper emoji item
+function getItemEmoji(name){
+  const lower = (name || '').toLowerCase();
+  if (lower.includes('matcha')) return '🍵';
+  if (lower.includes('red velvet')) return '❤️';
+  if (lower.includes('original') || lower.includes('cookie')) return '🍪';
+  if (lower.includes('cheese') || lower.includes('keju')) return '🧀';
+  if (lower.includes('brownies') || lower.includes('cokelat') || lower.includes('loyang')) return '🍫';
+  return '✨';
+}
+
 // Build WhatsApp text
 function buildWaMessage(o){
-  const itemLines = o.items.map((it,i) => `${i+1}. ${it.name} x${it.qty} = ${formatRupiah(it.subtotal)}`).join('\n');
-  let msg = `*PRE ORDER CROONIES*\n`;
-  msg += `No. Order: ${o.orderCode}\n\n`;
-  msg += `Status: ${o.pemesanType}\n`;
-  msg += `Nama: ${o.fullName}\n`;
+  const divider = '━━━━━━━━━━━━━━━━━━━━━━';
+  const formatWaPrice = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+  
+  const itemLines = o.items.map(it => {
+    const emoji = getItemEmoji(it.name);
+    return `   • ${emoji} ${it.name} ×${it.qty} = ${formatWaPrice(it.subtotal)}`;
+  }).join('\n');
+
+  let msg = `🍫 *CROONIES - PESANAN* 🍫\n`;
+  msg += `${divider}\n`;
+  msg += `📋 No. Order : #${o.orderCode}\n`;
+  msg += `👤 Nama      : ${o.fullName}\n`;
+  msg += `🏷️ Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' 🎓' : ''}\n`;
+
   if (o.pemesanType === 'Mahasiswa UNJ'){
-    msg += `Prodi: ${o.prodi || '-'}\n`;
-    msg += `Fakultas: ${o.fakultas || '-'}\n`;
+    msg += `🎓 Prodi     : ${o.prodi || '-'}\n`;
+    msg += `📚 Fakultas  : ${o.fakultas || '-'}\n`;
   } else {
-    msg += `Domisili: ${o.domisili || '-'}\n`;
+    msg += `🏡 Domisili  : ${o.domisili || '-'}\n`;
   }
-  msg += `Tanggal ambil: ${formatDateID(o.pickupDate)}\n`;
-  msg += `Jam ambil: ${o.pickupTime}\n`;
-  msg += `Metode bayar: ${o.payMethod}\n`;
-  msg += `\n--- Detail Pesanan ---\n${itemLines}\n`;
-  msg += `\nTotal: ${formatRupiah(o.total)}\n`;
+
+  if (o.pickupDate){
+    msg += `📅 Tgl Ambil : ${formatDateID(o.pickupDate)}\n`;
+  }
+  if (o.pickupTime){
+    msg += `⏰ Jam Ambil : ${o.pickupTime} WIB\n`;
+  }
+
+  msg += `${divider}\n`;
+  msg += `📦 *Detail Pesanan:*\n`;
+  msg += `${itemLines}\n\n`;
+
+  msg += `💰 *Subtotal    : ${formatWaPrice(o.total)}*\n`;
+  msg += `📍 Metode     : Ambil Sendiri (Gratis antar)\n`;
+  msg += `✨ *Total Akhir : ${formatWaPrice(o.total)}*\n`;
+
   if (o.needsDp){
-    msg += `Wajib DP minimal 50% (${formatRupiah(o.dpMinAmount)}) atau lebih.\n`;
+    msg += `⚠️ *Wajib DP   : ${formatWaPrice(o.dpMinAmount)} (50%)*\n`;
   }
-  if (o.notes) msg += `\nCatatan: ${o.notes}\n`;
-  msg += `\nMohon konfirmasi ya, terima kasih 🙏`;
+
+  const payEmoji = (o.payMethod || '').toLowerCase().includes('qris') ? '📱' : '💵';
+  msg += `💳 Pembayaran : ${payEmoji} ${o.payMethod}\n`;
+
+  if (o.notes){
+    msg += `📝 Catatan    : ${o.notes}\n`;
+  }
+
+  msg += `${divider}\n`;
+  msg += `Terima kasih sudah memesan di Croonies! 🙏\n`;
+  msg += `Konfirmasi alamat & jadwal pickup/delivery ya kak.`;
+
   return msg;
 }
 
