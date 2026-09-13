@@ -45,7 +45,7 @@
     <div class="checkout-hero-title">
       <p class="section-eyebrow">Checkout &amp; Pre-Order Resmi</p>
       <h1>Formulir Pemesanan</h1>
-      <p class="checkout-hero-sub">Lengkapi data pesananmu di bawah ini untuk konfirmasi pembuatan fresh dan penerbitan struk digital.</p>
+      <p class="checkout-hero-sub">Lengkapi data pesananmu di bawah ini untuk konfirmasi via Whatsapp.</p>
     </div>
 
     <!-- Empty State -->
@@ -96,7 +96,7 @@
                 </label>
                 <label class="toggle-pill-option">
                   <input type="radio" name="pemesanType" value="Umum" id="typeUmum">
-                  <span class="pill-text">Masyarakat Umum</span>
+                  <span class="pill-text">Umum</span>
                 </label>
               </div>
             </div>
@@ -134,12 +134,10 @@
               <div>
                 <label for="pickupDate">Tanggal Pengambilan <span class="req">*</span></label>
                 <input type="date" id="pickupDate" name="pickupDate" required>
-                <small class="input-hint">Minimal pemesanan H-1 (mulai besok)</small>
               </div>
               <div>
                 <label for="pickupTime">Jam Pengambilan <span class="req">*</span></label>
                 <input type="time" id="pickupTime" name="pickupTime" min="08:00" max="16:00" value="10:00" required>
-                <small class="input-hint">Jam operasional: 08.00 – 16.00 WIB</small>
               </div>
             </div>
 
@@ -158,7 +156,7 @@
             <div class="pay-options" style="margin-bottom: 12px;">
               <label class="pay-option" style="flex: 1;">
                 <input type="radio" name="payMethod" value="QRIS" checked>
-                <span><strong>QRIS</strong> (GoPay, OVO, Dana, ShopeePay, BCA/M-Banking)</span>
+                <span><strong>QRIS</strong></span>
               </label>
               <label class="pay-option" style="flex: 1;">
                 <input type="radio" name="payMethod" value="Tunai">
@@ -179,15 +177,8 @@
               <h3>Catatan Tambahan (Opsional)</h3>
             </div>
             <div class="form-row">
-              <textarea id="notes" name="notes" rows="2" placeholder="Catatan khusus, misalnya request ucapan atau kemasan khusus..."></textarea>
+              <textarea id="notes" name="notes" rows="2"></textarea>
             </div>
-          </div>
-
-          <!-- Desktop Form Submit -->
-          <div class="desktop-submit-wrap">
-            <button type="submit" class="btn btn-primary btn-full btn-large-order">
-              Kirim Pesanan ke WhatsApp
-            </button>
           </div>
 
         </form>
@@ -214,22 +205,7 @@
             <strong id="summaryDpAmount">Rp0</strong>
           </div>
 
-          <div class="summary-features-list">
-            <div class="feature-line">
-              <span class="f-dot">✓</span>
-              <span>Dipanggang fresh H-1 sebelum diambil</span>
-            </div>
-            <div class="feature-line">
-              <span class="f-dot">✓</span>
-              <span>Struk digital resmi otomatis terbit</span>
-            </div>
-            <div class="feature-line">
-              <span class="f-dot">✓</span>
-              <span>100% Halal &amp; bahan premium</span>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-primary btn-full" id="summarySubmitBtn" style="font-size: 15px; padding: 14px;">
+          <button type="submit" form="checkoutOrderForm" class="btn btn-primary btn-full" id="summarySubmitBtn" style="font-size: 15.5px; padding: 15px; margin-top: 18px;">
             Kirim Pesanan ke WhatsApp
           </button>
         </div>
