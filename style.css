@@ -495,15 +495,16 @@ p{margin:0 0 1em;}
 /* Receipt */
 .receipt-modal{width:400px;}
 .receipt-status-banner{
-  margin:0 22px 12px;
-  background:#F6EFE6;
-  border:1px solid var(--cream-2);
-  color:var(--brown);
-  padding:8px 14px;
-  border-radius:10px;
-  font-size:12px;
-  line-height:1.4;
+  margin:14px 22px 14px;
+  background:#EAF6EC;
+  border:1.5px solid #81C784;
+  color:#1B5E20;
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:12.5px;
+  line-height:1.45;
   text-align:center;
+  font-weight:500;
 }
 .receipt{margin:0 22px;background:var(--cream);border:1px dashed var(--brown);border-radius:14px;padding:22px;font-size:13.5px;}
 .receipt-brand{font-family:var(--font-display);font-size:22px;text-align:center;color:var(--redvelvet);margin-bottom:2px;}
