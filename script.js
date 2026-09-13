@@ -454,8 +454,8 @@ function renderReceipt(order){
       useCORS: true,
       logging: false
     }).then(canvas => {
-      // Auto-crop whitespace di atas
-      const croppedCanvas = cropCanvasWhitespaceTop(canvas, 20);
+      // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
+      const croppedCanvas = cropCanvasWhitespaceTop(canvas);
       currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
 
       // Tampilkan GAMBAR HASIL GENERATE LANGSUNG di modal website (BUKAN DOM JS)
@@ -483,28 +483,28 @@ function renderReceipt(order){
   }, 70);
 }
 
-function cropCanvasWhitespaceTop(canvas, padding = 14) {
+function cropCanvasWhitespaceTop(canvas) {
   const ctx = canvas.getContext('2d');
   const { width, height } = canvas;
   const data = ctx.getImageData(0, 0, width, height).data;
   let firstContentRow = 0;
-  // Threshold 180: skip putih/cream/border card, hanya tangkap teks gelap & ikon berwarna
+  // Temukan baris pertama yang berisi konten kartu (bukan transparan)
   outer: for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * 4;
-      const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
-      if (a > 20 && (r < 180 || g < 180 || b < 180)) {
+      const a = data[idx + 3];
+      if (a > 15) {
         firstContentRow = y;
         break outer;
       }
     }
   }
-  const cropY = Math.max(0, firstContentRow - padding);
-  const newHeight = height - cropY;
+  if (firstContentRow <= 0) return canvas;
+  const newHeight = height - firstContentRow;
   const newCanvas = document.createElement('canvas');
   newCanvas.width = width;
   newCanvas.height = newHeight;
-  newCanvas.getContext('2d').drawImage(canvas, 0, cropY, width, newHeight, 0, 0, width, newHeight);
+  newCanvas.getContext('2d').drawImage(canvas, 0, firstContentRow, width, newHeight, 0, 0, width, newHeight);
   return newCanvas;
 }
 
