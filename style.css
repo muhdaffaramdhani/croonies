@@ -695,9 +695,18 @@ p{margin:0 0 1em;}
   justify-content: center;
 }
 .ticket-watermark img {
+  /* Disembunyikan; digunakan hanya sebagai sumber ukuran alami logo.
+     Rendering visual watermark dilakukan lewat .ticket-watermark-bg
+     (background-image) karena html2canvas tidak selalu menghormati
+     object-fit pada elemen <img>, sehingga logo bisa tampak gepeng. */
+  display: none;
+}
+.ticket-watermark-bg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   opacity: 0.05;
   filter: grayscale(100%);
 }
@@ -864,9 +873,8 @@ p{margin:0 0 1em;}
    with flexbox align-items:center so vertical position is controlled by
    layout, not by font leading metrics that html2canvas renders inaccurately. */
 .ticket-summary-card {
-  background: #F7F2EA;
   border-radius: 14px;
-  padding: 16px 16px 14px;
+  padding: 16px 0 0;
   margin-top: 10px;
   display: flex;
   flex-direction: column;
@@ -884,7 +892,9 @@ p{margin:0 0 1em;}
   margin-top: 10px;
 }
 .ticket-summary-row.ticket-total-row {
-  margin-bottom: 4px;
+  margin-bottom: 10px;
+  padding-top: 12px;
+  border-top: 1.5px dashed #E3D7C4;
 }
 .ticket-total-label {
   font-size: 15px;
@@ -926,9 +936,7 @@ p{margin:0 0 1em;}
   font-size: 10px;
   font-weight: 600;
   color: var(--brown-dark);
-  background: #F5ECE0;
-  padding: 3px 9px 4px 9px;
-  border-radius: 100px;
+  padding: 3px 0 4px 0;
   line-height: 14px;
   display: inline-block;
   text-align: center;

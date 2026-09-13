@@ -375,7 +375,7 @@ function renderReceipt(order){
   // 2. Render tiket di staging template unconstrained (tidak dibatasi height atau overflow)
   template.innerHTML = `
     <div class="ticket-watermark" aria-hidden="true">
-      <img src="assets/croonies_logo.png" alt="">
+      <div class="ticket-watermark-bg" style="background-image:url('assets/croonies_logo.png');"></div>
     </div>
 
     <div class="ticket-content">
@@ -454,14 +454,15 @@ function renderReceipt(order){
     ? document.fonts.ready
     : Promise.resolve();
 
-  // Pastikan juga watermark logo sudah selesai dimuat
-  const logoImg = template.querySelector('.ticket-watermark img');
-  const waitForLogo = (logoImg && !logoImg.complete)
-    ? new Promise(resolve => {
-        logoImg.addEventListener('load', resolve, { once: true });
-        logoImg.addEventListener('error', resolve, { once: true });
-      })
-    : Promise.resolve();
+  // Pastikan juga logo watermark (background-image) sudah selesai dimuat
+  // sebelum di-capture, supaya tidak blank/kosong saat html2canvas berjalan.
+  const waitForLogo = new Promise(resolve => {
+    const preload = new Image();
+    preload.onload = resolve;
+    preload.onerror = resolve;
+    preload.src = 'assets/croonies_logo.png';
+    if (preload.complete) resolve();
+  });
 
   Promise.all([waitForFonts, waitForLogo]).then(() => {
     requestAnimationFrame(() => requestAnimationFrame(() => {
