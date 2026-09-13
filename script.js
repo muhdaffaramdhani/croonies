@@ -427,7 +427,6 @@ function buildWaMessage(o){
     msg += `Wajib DP minimal 50% (${formatRupiah(o.dpMinAmount)}) atau lebih.\n`;
   }
   if (o.notes) msg += `\nCatatan: ${o.notes}\n`;
-  msg += `\n📸 _(Foto struk bukti pemesanan telah tersimpan otomatis dan saya lampirkan di chat ini agar valid)_\n`;
   msg += `\nMohon konfirmasi ya, terima kasih 🙏`;
   return msg;
 }
