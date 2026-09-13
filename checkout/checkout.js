@@ -404,41 +404,61 @@ function renderAndGenerateReceipt(order){
     </div>
   `;
 
-  // Beri mikro jeda agar font & asset logo siap
-  setTimeout(() => {
-    html2canvas(receiptTicketTemplate, {
-      backgroundColor: '#FFFFFF',
-      scale: 2,
-      useCORS: true,
-      logging: false
-    }).then(canvas => {
-      // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
-      const croppedCanvas = cropCanvasWhitespaceTop(canvas);
-      currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
+  // Pastikan font (Baloo 2 / Poppins) sudah SELESAI di-load sebelum di-capture.
+  // Tanpa ini, teks bisa reflow di tengah proses html2canvas (posisi teks jadi
+  // tidak sinkron dengan background box-nya) karena font baru diterapkan
+  // browser setelah layout awal dihitung dengan font fallback.
+  const waitForFonts = (document.fonts && document.fonts.ready)
+    ? document.fonts.ready
+    : Promise.resolve();
 
-      // Tampilkan hasil gambar langsung di modal
-      receiptContent.innerHTML = `
-        <img src="${currentReceiptDataUrl}" alt="Struk Pesanan ${order.orderCode}" class="receipt-img-display" />
-      `;
+  // Pastikan juga logo footer sudah selesai dimuat (kalau belum, tunggu load/error-nya)
+  const logoImg = receiptTicketTemplate.querySelector('.ticket-footer-logo');
+  const waitForLogo = (logoImg && !logoImg.complete)
+    ? new Promise(resolve => {
+        logoImg.addEventListener('load', resolve, { once: true });
+        logoImg.addEventListener('error', resolve, { once: true });
+      })
+    : Promise.resolve();
 
-      // Download otomatis
-      downloadReceiptFile(order);
+  Promise.all([waitForFonts, waitForLogo]).then(() => {
+    // Tunggu 2 animation frame ekstra supaya browser sempat repaint
+    // dengan font final sebelum di-capture.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      html2canvas(receiptTicketTemplate, {
+        backgroundColor: '#FFFFFF',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
+        const croppedCanvas = cropCanvasWhitespaceTop(canvas);
+        currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
 
-      // Copy ke clipboard jika didukung
-      if (navigator.clipboard && window.ClipboardItem) {
-        croppedCanvas.toBlob(blob => {
-          if (blob) {
-            navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': blob })
-            ]).catch(() => {});
-          }
-        }, 'image/png');
-      }
-    }).catch(err => {
-      console.warn('Gagal render canvas struk:', err);
-      receiptContent.innerHTML = `<div style="color:var(--brown);font-size:13px;padding:24px;text-align:center;">Gagal memuat preview struk. Silakan klik download ulang struk.</div>`;
-    });
-  }, 70);
+        // Tampilkan hasil gambar langsung di modal
+        receiptContent.innerHTML = `
+          <img src="${currentReceiptDataUrl}" alt="Struk Pesanan ${order.orderCode}" class="receipt-img-display" />
+        `;
+
+        // Download otomatis
+        downloadReceiptFile(order);
+
+        // Copy ke clipboard jika didukung
+        if (navigator.clipboard && window.ClipboardItem) {
+          croppedCanvas.toBlob(blob => {
+            if (blob) {
+              navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+              ]).catch(() => {});
+            }
+          }, 'image/png');
+        }
+      }).catch(err => {
+        console.warn('Gagal render canvas struk:', err);
+        receiptContent.innerHTML = `<div style="color:var(--brown);font-size:13px;padding:24px;text-align:center;">Gagal memuat preview struk. Silakan klik download ulang struk.</div>`;
+      });
+    }));
+  });
 }
 
 /**

@@ -446,17 +446,31 @@ function renderReceipt(order){
     </div>
   `;
 
-  // 3. Generate image dengan html2canvas (beri jeda mikro agar DOM template siap)
-  setTimeout(() => {
-    html2canvas(template, {
-      backgroundColor: '#FFFFFF',
-      scale: 2,
-      useCORS: true,
-      logging: false
-    }).then(canvas => {
-      // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
-      const croppedCanvas = cropCanvasWhitespaceTop(canvas);
-      currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
+  // Pastikan font sudah selesai di-load sebelum di-capture
+  const waitForFonts = (document.fonts && document.fonts.ready)
+    ? document.fonts.ready
+    : Promise.resolve();
+
+  // Pastikan juga logo footer sudah selesai dimuat
+  const logoImg = template.querySelector('.ticket-footer-logo');
+  const waitForLogo = (logoImg && !logoImg.complete)
+    ? new Promise(resolve => {
+        logoImg.addEventListener('load', resolve, { once: true });
+        logoImg.addEventListener('error', resolve, { once: true });
+      })
+    : Promise.resolve();
+
+  Promise.all([waitForFonts, waitForLogo]).then(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      html2canvas(template, {
+        backgroundColor: '#FFFFFF',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
+        const croppedCanvas = cropCanvasWhitespaceTop(canvas);
+        currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
 
       // Tampilkan GAMBAR HASIL GENERATE LANGSUNG di modal website (BUKAN DOM JS)
       previewContainer.innerHTML = `
@@ -480,7 +494,8 @@ function renderReceipt(order){
       console.warn('Gagal render canvas struk:', err);
       previewContainer.innerHTML = `<div style="color:var(--brown);font-size:13px;padding:24px;text-align:center;">Gagal memuat preview struk. Silakan coba klik download ulang struk.</div>`;
     });
-  }, 70);
+    }));
+  });
 }
 
 function cropCanvasWhitespaceTop(canvas) {
