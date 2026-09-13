@@ -739,22 +739,6 @@ function sendToWhatsApp(order){
 }
 
 // Modal controls
-const copyWaMsgBtn = document.getElementById('copyWaMsgBtn');
-if (copyWaMsgBtn) {
-  copyWaMsgBtn.addEventListener('click', () => {
-    if (!lastOrder) return;
-    const msg = buildWaMessage(lastOrder);
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(msg).then(() => {
-        const origHtml = copyWaMsgBtn.innerHTML;
-        copyWaMsgBtn.innerHTML = '✅ Teks Berhasil Disalin!';
-        setTimeout(() => { copyWaMsgBtn.innerHTML = origHtml; }, 2500);
-      }).catch(() => {
-        alert('Gagal menyalin teks ke clipboard.');
-      });
-    }
-  });
-}
 closeReceiptBtn.addEventListener('click', () => {
   receiptModal.classList.remove('show');
   receiptOverlay.classList.remove('show');
