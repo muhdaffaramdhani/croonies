@@ -45,7 +45,6 @@ const PRODUCTS = [
 const WA_NUMBER = '6282320538422';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
-const ORDER_COUNTER_KEY = 'croonies_order_counters';
 
 // ---------- State ----------
 let cart = {}; // id -> qty
@@ -68,19 +67,23 @@ function formatDateID(dateStr){
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }
-// Order number format: CR-DDMMYY-NN (DDMMYY = tanggal pesanan dikirim, NN = urutan pada tanggal itu)
-function generateOrderCode(){
+// Order number format: CR-DDMMYY-HHMM
+// DDMMYY = tanggal pengambilan (dari form), HHMM = jam saat order dibuat
+function generateOrderCode(pickupDate){
   const now = new Date();
   const pad = n => String(n).padStart(2,'0');
-  const dateKey = `${pad(now.getDate())}${pad(now.getMonth()+1)}${String(now.getFullYear()).slice(2)}`;
 
-  let counters = {};
-  try { counters = JSON.parse(localStorage.getItem(ORDER_COUNTER_KEY)) || {}; } catch(e) { counters = {}; }
-  const next = (counters[dateKey] || 0) + 1;
-  counters[dateKey] = next;
-  try { localStorage.setItem(ORDER_COUNTER_KEY, JSON.stringify(counters)); } catch(e) {}
+  // DDMMYY dari tanggal pengambilan
+  let pickupPart = '??????';
+  if (pickupDate) {
+    const d = new Date(pickupDate + 'T00:00:00');
+    pickupPart = `${pad(d.getDate())}${pad(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}`;
+  }
 
-  return `CR-${dateKey}-${pad(next)}`;
+  // HHMM dari waktu order sekarang
+  const timePart = `${pad(now.getHours())}${pad(now.getMinutes())}`;
+
+  return `CR-${pickupPart}-${timePart}`;
 }
 
 // ---------- Render menu ----------
@@ -255,7 +258,7 @@ orderForm.addEventListener('submit', e => {
   const total = cartTotal();
   const needsDp = total > DP_THRESHOLD;
   const dpMinAmount = needsDp ? Math.round(total * DP_PERCENT) : 0;
-  const orderCode = generateOrderCode();
+  const orderCode = generateOrderCode(pickupDate);
 
   lastOrder = {
     orderCode, pemesanType, fullName, domisili, prodi, fakultas, pickupDate, pickupTime, payMethod, notes,
