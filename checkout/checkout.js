@@ -255,13 +255,36 @@ function handleStatusChange(){
 typeUnj.addEventListener('change', handleStatusChange);
 typeUmum.addEventListener('change', handleStatusChange);
 
-// Minimum date = tomorrow
+let fpPickupDate = null;
+
+// Minimum date = tomorrow (kosong tanpa default, format dd/mm/yyyy)
 function initDateConstraint(){
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDateStr = tomorrow.toISOString().split('T')[0];
   pickupDateInput.min = minDateStr;
-  pickupDateInput.value = minDateStr;
+
+  if (window.flatpickr) {
+    if (!fpPickupDate) {
+      fpPickupDate = flatpickr(pickupDateInput, {
+        locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.id) ? window.flatpickr.l10ns.id : 'id',
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        altInputClass: 'flatpickr-custom-input',
+        minDate: minDateStr,
+        placeholder: 'dd/mm/yyyy',
+        disableMobile: true,
+        allowInput: true
+      });
+    } else {
+      fpPickupDate.set('minDate', minDateStr);
+    }
+    // Kosongkan nilai tanggal (hilangkan default)
+    fpPickupDate.clear();
+  } else {
+    pickupDateInput.value = '';
+  }
 }
 
 // Summary & Mobile submit buttons trigger form submit
@@ -277,12 +300,22 @@ checkoutOrderForm.addEventListener('submit', e => {
     return;
   }
 
+  const pickupDate = pickupDateInput.value;
+  if (!pickupDate) {
+    alert('Silakan pilih tanggal pengambilan terlebih dahulu.');
+    if (fpPickupDate && fpPickupDate.altInput) {
+      fpPickupDate.altInput.focus();
+    } else {
+      pickupDateInput.focus();
+    }
+    return;
+  }
+
   const pemesanType = document.querySelector('input[name="pemesanType"]:checked').value;
   const fullName = document.getElementById('fullName').value.trim();
   const prodi = prodiInput.value.trim();
   const fakultas = fakultasInput.value.trim();
   const domisili = domisiliInput.value.trim();
-  const pickupDate = pickupDateInput.value;
   const pickupTime = document.getElementById('pickupTime').value;
   const payMethod = document.querySelector('input[name="payMethod"]:checked').value;
   const notes = document.getElementById('notes').value.trim();

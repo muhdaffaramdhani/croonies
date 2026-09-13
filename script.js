@@ -309,6 +309,27 @@ document.getElementById('drawerCheckoutBtn').addEventListener('click', goToCheck
 document.getElementById('closeCheckoutBtn').addEventListener('click', closeCheckout);
 checkoutOverlay.addEventListener('click', closeCheckout);
 
+// Flatpickr for home page modal date
+const homePickupDateInput = document.getElementById('pickupDate');
+let fpHomePickupDate = null;
+if (homePickupDateInput && window.flatpickr) {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDateStr = tomorrow.toISOString().split('T')[0];
+  fpHomePickupDate = flatpickr(homePickupDateInput, {
+    locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.id) ? window.flatpickr.l10ns.id : 'id',
+    dateFormat: 'Y-m-d',
+    altInput: true,
+    altFormat: 'd/m/Y',
+    altInputClass: 'flatpickr-custom-input',
+    minDate: minDateStr,
+    placeholder: 'dd/mm/yyyy',
+    disableMobile: true,
+    allowInput: true
+  });
+  fpHomePickupDate.clear();
+}
+
 // ---------- Order submit -> receipt ----------
 const orderForm = document.getElementById('orderForm');
 const receiptModal = document.getElementById('receiptModal');
@@ -319,12 +340,17 @@ let lastOrder = null;
 orderForm.addEventListener('submit', e => {
   e.preventDefault();
 
+  const pickupDate = document.getElementById('pickupDate').value;
+  if (!pickupDate) {
+    alert('Silakan pilih tanggal pengambilan terlebih dahulu.');
+    return;
+  }
+
   const pemesanType = document.querySelector('input[name="pemesanType"]:checked').value;
   const fullName = document.getElementById('fullName').value.trim();
   const domisili = document.getElementById('domisili') ? document.getElementById('domisili').value.trim() : '';
   const prodi = document.getElementById('prodi').value.trim();
   const fakultas = document.getElementById('fakultas').value.trim();
-  const pickupDate = document.getElementById('pickupDate').value;
   const pickupTime = document.getElementById('pickupTime').value;
   const payMethod = document.querySelector('input[name="payMethod"]:checked').value;
   const notes = document.getElementById('notes').value.trim();
@@ -355,6 +381,7 @@ orderForm.addEventListener('submit', e => {
   renderCart();
   renderMenu();
   orderForm.reset();
+  if (fpHomePickupDate) fpHomePickupDate.clear();
 });
 
 let currentReceiptDataUrl = null;
