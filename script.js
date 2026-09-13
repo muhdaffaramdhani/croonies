@@ -465,17 +465,19 @@ function renderReceipt(order){
 
   Promise.all([waitForFonts, waitForLogo]).then(() => {
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      const renderOptions = {
+      const baseOptions = {
         backgroundColor: '#FFFFFF',
         scale: 2,
         useCORS: true,
-        logging: false,
-        foreignObjectRendering: true
+        logging: false
       };
 
-      html2canvas(template, renderOptions).catch(err => {
-        console.warn('foreignObjectRendering gagal, fallback ke mode default:', err);
-        return html2canvas(template, { ...renderOptions, foreignObjectRendering: false });
+      html2canvas(template, baseOptions).then(canvas => {
+        if (isCanvasBlank(canvas)) {
+          console.warn('Hasil capture struk kosong, mencoba render ulang...');
+          return html2canvas(template, baseOptions);
+        }
+        return canvas;
       }).then(canvas => {
         // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
         const croppedCanvas = cropCanvasWhitespaceTop(canvas);
@@ -505,6 +507,34 @@ function renderReceipt(order){
     });
     }));
   });
+}
+
+/**
+ * Cek apakah hasil capture html2canvas kosong/blank
+ */
+function isCanvasBlank(canvas) {
+  const ctx = canvas.getContext('2d');
+  const { width, height } = canvas;
+  if (!width || !height) return true;
+
+  const gridSize = 12;
+  let nonBlankFound = false;
+
+  outer: for (let i = 1; i < gridSize; i++) {
+    for (let j = 1; j < gridSize; j++) {
+      const x = Math.floor((width / gridSize) * i);
+      const y = Math.floor((height / gridSize) * j);
+      const pixel = ctx.getImageData(x, y, 1, 1).data;
+      const [r, g, b, a] = pixel;
+      const isWhiteOrTransparent = (a === 0) || (r > 250 && g > 250 && b > 250);
+      if (!isWhiteOrTransparent) {
+        nonBlankFound = true;
+        break outer;
+      }
+    }
+  }
+
+  return !nonBlankFound;
 }
 
 function cropCanvasWhitespaceTop(canvas) {

@@ -429,24 +429,29 @@ function renderAndGenerateReceipt(order){
     // Tunggu 2 animation frame ekstra supaya browser sempat repaint
     // dengan font final sebelum di-capture.
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      // foreignObjectRendering: true membuat html2canvas menggambar teks
-      // lewat mesin render BROWSER ASLI (via SVG <foreignObject>), bukan
-      // mesin ukur-huruf manual bawaan html2canvas yang sering meleset
-      // menghitung metrik vertikal font custom (ini akar penyebab teks
-      // "turun" tidak simetris dengan kotak background-nya).
-      const renderOptions = {
+      const baseOptions = {
         backgroundColor: '#FFFFFF',
         scale: 2,
         useCORS: true,
-        logging: false,
-        foreignObjectRendering: true
+        logging: false
       };
 
-      html2canvas(receiptTicketTemplate, renderOptions).catch(err => {
-        // Beberapa browser lama tidak mendukung foreignObjectRendering
-        // dengan baik -> fallback ke mode default html2canvas.
-        console.warn('foreignObjectRendering gagal, fallback ke mode default:', err);
-        return html2canvas(receiptTicketTemplate, { ...renderOptions, foreignObjectRendering: false });
+      // Catatan: foreignObjectRendering (mode render via SVG <foreignObject>
+      // browser asli) TIDAK dipakai di sini. Elemen struk sengaja diposisikan
+      // "position: fixed; left: -9999px" (di luar layar) supaya tidak terlihat
+      // pengguna, dan beberapa browser gagal me-rasterisasi <foreignObject>
+      // dengan benar untuk elemen yang posisinya jauh di luar viewport ->
+      // hasilnya kosong/blank tanpa error. Mode default (canvas manual)
+      // lebih lambat sedikit dalam presisi metrik font, tapi jauh lebih
+      // konsisten menghasilkan gambar (tidak pernah blank).
+      html2canvas(receiptTicketTemplate, baseOptions).then(canvas => {
+        // Jaga-jaga tambahan: kalau ternyata canvas hasil capture kosong
+        // (mis. karena timing/asset belum siap), coba render ulang sekali.
+        if (isCanvasBlank(canvas)) {
+          console.warn('Hasil capture struk kosong, mencoba render ulang...');
+          return html2canvas(receiptTicketTemplate, baseOptions);
+        }
+        return canvas;
       }).then(canvas => {
         // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
         const croppedCanvas = cropCanvasWhitespaceTop(canvas);
@@ -476,6 +481,40 @@ function renderAndGenerateReceipt(order){
       });
     }));
   });
+}
+
+/**
+ * Cek apakah hasil capture html2canvas kosong/blank (mis. gagal me-render
+ * konten karena timing/positioning). Mengambil sampel beberapa titik acak
+ * di seluruh canvas; kalau semuanya polos putih/transparan, kemungkinan
+ * besar capture gagal dan perlu di-render ulang.
+ * @param {HTMLCanvasElement} canvas
+ * @returns {boolean}
+ */
+function isCanvasBlank(canvas) {
+  const ctx = canvas.getContext('2d');
+  const { width, height } = canvas;
+  if (!width || !height) return true;
+
+  const gridSize = 12; // grid gridSize x gridSize titik sampel
+  let nonBlankFound = false;
+
+  outer: for (let i = 1; i < gridSize; i++) {
+    for (let j = 1; j < gridSize; j++) {
+      const x = Math.floor((width / gridSize) * i);
+      const y = Math.floor((height / gridSize) * j);
+      const pixel = ctx.getImageData(x, y, 1, 1).data;
+      const [r, g, b, a] = pixel;
+      // Anggap "kosong" kalau pixel putih polos atau transparan penuh
+      const isWhiteOrTransparent = (a === 0) || (r > 250 && g > 250 && b > 250);
+      if (!isWhiteOrTransparent) {
+        nonBlankFound = true;
+        break outer;
+      }
+    }
+  }
+
+  return !nonBlankFound;
 }
 
 /**
