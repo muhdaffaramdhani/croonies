@@ -660,7 +660,7 @@ p{margin:0 0 1em;}
   background: #FFFFFF;
   border: 1.5px solid #EFE6D8;
   border-radius: 22px;
-  padding: 24px 22px 24px 22px;
+  padding: 24px 22px 16px 22px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -862,19 +862,20 @@ p{margin:0 0 1em;}
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 14px;
-  padding-top: 12px;
-  margin-bottom: 2px;
-  border-top: 1px dashed #E0D5C7;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1.5px dashed #E0D5C7;
+  height: 22px;
+  box-sizing: content-box;
 }
 .ticket-footer-brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   height: 22px;
 }
 .ticket-footer-logo {
-  height: 20px;
+  height: 18px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -882,22 +883,23 @@ p{margin:0 0 1em;}
 .ticket-footer-brand span {
   font-size: 11px;
   color: var(--brown);
-  line-height: 1;
+  line-height: 22px;
+  height: 22px;
   display: inline-flex;
   align-items: center;
-  transform: translateY(-0.5px);
 }
 .ticket-footer-ig {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
   color: var(--brown-dark);
   background: #F5ECE0;
-  padding: 4px 10px;
+  padding: 0 10px;
   border-radius: 100px;
-  line-height: 1;
+  line-height: 22px;
+  height: 22px;
   display: inline-flex;
   align-items: center;
-  height: 22px;
+  justify-content: center;
   box-sizing: border-box;
 }
 
