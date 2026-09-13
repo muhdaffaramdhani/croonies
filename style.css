@@ -505,284 +505,360 @@ p{margin:0 0 1em;}
 .receipt-hint{margin:0 22px 4px;font-size:12.5px;color:var(--brown);}
 .receipt-logo{height:34px;width:auto;display:block;margin:0 auto 2px;}
 
-/* Receipt */
-/* Receipt Modal - Modern Ticket & Landscape on Desktop */
-.receipt-modal{
-  width:min(820px, 94vw);
-  max-width:840px;
-  background:var(--white);
-  border-radius:24px;
-  box-shadow:0 24px 60px rgba(59,36,21,0.22);
-  padding:20px 24px;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
+/* ==========================================================================
+   Receipt Modal (Landscape on Desktop, Portrait Ticket Reference Style)
+   ========================================================================== */
+.receipt-modal {
+  width: min(840px, 94vw);
+  max-width: 860px;
+  max-height: 90vh;
+  background: #FAF8F5;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(59,36,21,0.22);
+  padding: 24px 28px;
+  display: block;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -45%) scale(.96);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  box-sizing: border-box;
 }
-.receipt-modal .modal-head{
-  padding:0 0 10px;
-  border-bottom:1px solid rgba(59,36,21,0.06);
-}
-.receipt-status-banner{
-  margin:12px 0 14px;
-  background:#EAF6EC;
-  border:1.5px solid #81C784;
-  color:#1B5E20;
-  padding:9px 14px;
-  border-radius:12px;
-  font-size:12.5px;
-  line-height:1.45;
-  text-align:center;
-  font-weight:500;
-}
-.receipt{
-  background:#FFFFFF;
-  border:1.5px solid #EFE6D8;
-  border-radius:20px;
-  padding:18px 22px;
-  box-shadow:0 4px 20px rgba(59,36,21,0.05);
-  position:relative;
-  margin:0;
-}
-.ticket-grid{
-  display:grid;
-  grid-template-columns:1fr auto 1.15fr;
-  gap:18px;
-  align-items:stretch;
-}
-.ticket-col-left, .ticket-col-right{
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-}
-.ticket-brand-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:10px;
-}
-.ticket-logo{height:28px;width:auto;}
-.ticket-date{font-size:11.5px;color:var(--brown);font-weight:500;}
-
-.ticket-status-head{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:12px;
-}
-.ticket-check-icon{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:#2E7D32;
-  color:#FFFFFF;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-  box-shadow:0 3px 10px rgba(46,125,50,0.22);
-}
-.ticket-status-head h4{
-  margin:0;
-  font-family:var(--font-display);
-  font-size:17px;
-  color:var(--brown-dark);
-  line-height:1.2;
-}
-.ticket-order-badge{
-  font-family:var(--font-body);
-  font-size:11.5px;
-  font-weight:700;
-  color:var(--redvelvet);
-  margin-top:2px;
+.receipt-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
 }
 
-.ticket-info-group{
-  background:#FAF5EE;
-  border-radius:12px;
-  padding:10px 14px;
-  margin-bottom:12px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+.receipt-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--brown);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.15s ease;
 }
-.ticket-info-row{
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  color:var(--brown-dark);
-}
-.ticket-info-row span{color:var(--brown);}
-.ticket-info-row strong{font-weight:600;}
-
-.ticket-total-box{
-  background:#FAF3E7;
-  border:1.5px solid #ECDCC3;
-  border-radius:12px;
-  padding:11px 14px;
-  margin-top:auto;
-}
-.ticket-total-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:13.5px;
-  font-weight:700;
-  color:var(--brown-dark);
-  margin-bottom:3px;
-}
-.ticket-total-row strong{
-  font-size:16.5px;
-  color:var(--redvelvet);
-}
-.ticket-sub-row{
-  display:flex;
-  justify-content:space-between;
-  font-size:11.5px;
-  color:var(--brown);
-  padding-top:2px;
-}
-.ticket-sub-row.dp-highlight{
-  border-top:1px dashed #E0CEB4;
-  margin-top:5px;
-  padding-top:5px;
-  color:var(--redvelvet-dark);
+.receipt-modal-close:hover {
+  color: var(--redvelvet);
 }
 
-/* Perforation Divider */
-.ticket-perforation{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  width:16px;
-  margin:0 -8px;
-}
-.ticket-perforation .ticket-line{
-  width:1px;
-  height:100%;
-  border-left:1.5px dashed #DCCFBD;
-}
-.ticket-perforation .ticket-notch{
-  position:absolute;
-  width:18px;
-  height:18px;
-  background:var(--white);
-  border-radius:50%;
-  border:1.5px solid #EFE6D8;
-  z-index:2;
-}
-.ticket-perforation .ticket-notch.top{
-  top:-28px;
-}
-.ticket-perforation .ticket-notch.bottom{
-  bottom:-28px;
+.receipt-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  align-items: center;
 }
 
-/* Right column items */
-.ticket-items-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:12.5px;
-  font-weight:700;
-  color:var(--brown-dark);
-  border-bottom:1.5px solid #F0E6D6;
-  padding-bottom:6px;
-  margin-bottom:8px;
-}
-.ticket-items-head span:last-child{
-  font-weight:600;
-  font-size:11.5px;
-  color:var(--brown);
+.receipt-col-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
 }
 
-.ticket-items-list{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  max-height:155px;
-  overflow-y:auto;
-  padding-right:2px;
-}
-.ticket-item-row{
-  display:grid;
-  grid-template-columns:16px 1fr auto;
-  gap:8px;
-  align-items:center;
-  font-size:12px;
-}
-.ticket-item-num{
-  color:var(--brown);
-  font-size:11px;
-  font-weight:600;
-}
-.ticket-item-detail{
-  display:flex;
-  flex-direction:column;
-  line-height:1.2;
-}
-.ticket-item-name{
-  font-weight:600;
-  color:var(--brown-dark);
-}
-.ticket-item-calc{
-  font-size:10.5px;
-  color:var(--brown);
-}
-.ticket-item-price{
-  font-weight:600;
-  color:var(--brown-dark);
-  white-space:nowrap;
+/* Portrait Receipt Ticket (Reference Style: Payment Successful / Organic Blend) */
+.receipt-ticket {
+  width: 100%;
+  max-width: 340px;
+  background: #FFFFFF;
+  border: 1.5px solid #EFE6D8;
+  border-radius: 20px;
+  padding: 18px 20px 14px 20px;
+  box-shadow: 0 8px 24px rgba(59,36,21,0.06);
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
-.ticket-notes-box{
-  background:#FAF5EE;
-  border-radius:8px;
-  padding:6px 10px;
-  font-size:11px;
-  color:var(--brown);
-  margin-top:6px;
+.ticket-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
-.ticket-notes-box span{font-weight:600;color:var(--brown-dark);}
-
-.ticket-footer-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:auto;
-  padding-top:8px;
-  border-top:1px dashed #EADECE;
+.ticket-check-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #2E7D32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 3px 10px rgba(46,125,50,0.22);
 }
-.ticket-footer-text{
-  display:flex;
-  flex-direction:column;
-  line-height:1.2;
+.ticket-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--brown-dark);
+  margin: 0 0 3px;
+  line-height: 1.2;
 }
-.ticket-footer-text span{
-  font-family:var(--font-display);
-  font-weight:700;
-  font-size:12px;
-  color:var(--redvelvet);
+.ticket-order-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--brown);
+  margin-bottom: 2px;
 }
-.ticket-footer-text small{
-  font-size:10px;
-  color:var(--brown);
+.ticket-order-badge span {
+  color: var(--redvelvet);
 }
-.ticket-social-tag{
-  font-size:11px;
-  font-weight:600;
-  color:var(--brown);
-  background:#F5ECE0;
-  padding:3px 9px;
-  border-radius:100px;
+.ticket-meta-subtitle {
+  font-size: 11px;
+  color: var(--brown);
+  font-weight: 500;
 }
 
-.receipt-actions{
-  display:flex;
-  gap:12px;
-  padding:14px 0 0;
-  margin-top:0;
+/* Perforation Divider with Notches */
+.ticket-divider {
+  position: relative;
+  margin: 12px -20px;
+  display: flex;
+  align-items: center;
+}
+.ticket-divider-line {
+  width: 100%;
+  height: 0;
+  border-top: 1.5px dashed #DFD4C5;
+}
+.ticket-notch {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #FAF8F5;
+  border: 1.5px solid #EFE6D8;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.ticket-notch.notch-left {
+  left: -9px;
+}
+.ticket-notch.notch-right {
+  right: -9px;
+}
+
+/* Ticket Body & Table */
+.ticket-body {
+  display: flex;
+  flex-direction: column;
+}
+.ticket-table-head {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--brown);
+  padding-bottom: 5px;
+  border-bottom: 1px solid #F0E6D8;
+  margin-bottom: 6px;
+}
+.ticket-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.ticket-item-row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+}
+.t-col-num {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brown);
+}
+.t-col-item {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.t-item-name {
+  font-weight: 600;
+  color: var(--brown-dark);
+}
+.t-item-calc {
+  font-size: 10.5px;
+  color: var(--brown);
+}
+.t-col-price {
+  font-weight: 600;
+  color: var(--brown-dark);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ticket-notes-box {
+  background: #FAF5EE;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  color: var(--brown);
+  margin-top: 6px;
+}
+.ticket-notes-box span {
+  font-weight: 600;
+  color: var(--brown-dark);
+}
+
+/* Summary Card Box (Reference Style) */
+.ticket-summary-card {
+  background: #FAF3E7;
+  border: 1px solid #ECDCC3;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ticket-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--brown);
+}
+.ticket-summary-row.ticket-total-row {
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+.ticket-total-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brown-dark);
+}
+.ticket-total-amount {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--redvelvet);
+}
+.ticket-summary-row.ticket-dp-row {
+  border-top: 1px dashed #E0CEB4;
+  padding-top: 4px;
+  margin-top: 2px;
+  color: var(--redvelvet-dark);
+}
+.ticket-summary-row.ticket-dp-row strong {
+  font-weight: 700;
+}
+
+/* Footer Tag */
+.ticket-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #EADECE;
+}
+.ticket-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ticket-footer-logo {
+  height: 16px;
+  width: auto;
+}
+.ticket-footer-brand span {
+  font-size: 10px;
+  color: var(--brown);
+}
+.ticket-footer-ig {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--brown);
+  background: #F5ECE0;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+
+/* Right Column: Info & Action Controls */
+.receipt-col-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.receipt-side-header h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  color: var(--brown-dark);
+}
+.receipt-side-subtitle {
+  font-size: 12.5px;
+  color: var(--brown);
+  line-height: 1.45;
+  margin: 0;
+}
+.receipt-status-banner {
+  margin: 12px 0 14px;
+  background: #EAF6EC;
+  border: 1.5px solid #81C784;
+  color: #1B5E20;
+  padding: 9px 14px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  text-align: center;
+  font-weight: 600;
+}
+.receipt-side-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.side-info-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #FFFFFF;
+  border: 1px solid #EDE4D8;
+  border-radius: 12px;
+  padding: 9px 12px;
+}
+.side-info-icon {
+  font-size: 16px;
+  line-height: 1.2;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.side-info-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--brown-dark);
+  margin-bottom: 1px;
+}
+.side-info-item small {
+  display: block;
+  font-size: 11px;
+  color: var(--brown);
+  line-height: 1.35;
+}
+.receipt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @media (max-width:880px){
@@ -799,48 +875,40 @@ p{margin:0 0 1em;}
 }
 @media (max-width:767px){
   .receipt-modal{
-    width:94vw;
-    max-height:92vh;
-    padding:16px;
-    overflow-y:auto;
+    width: min(420px, 94vw);
+    max-height: 92vh;
+    padding: 20px 16px;
+    overflow-y: auto;
   }
-  .receipt{
-    padding:16px 14px;
+  .receipt-layout{
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
-  .ticket-grid{
-    grid-template-columns:1fr;
-    gap:12px;
+  .receipt-ticket{
+    max-width: 100%;
+    padding: 16px 16px 12px;
   }
-  .ticket-perforation{
-    width:100%;
-    height:16px;
-    margin:2px 0;
-    flex-direction:row;
+  .ticket-divider{
+    margin: 10px -16px;
   }
-  .ticket-perforation .ticket-line{
-    width:100%;
-    height:1px;
-    border-left:none;
-    border-top:1.5px dashed #DCCFBD;
+  .ticket-notch.notch-left{
+    left: -9px;
   }
-  .ticket-perforation .ticket-notch{
-    top:auto;
-    bottom:auto;
+  .ticket-notch.notch-right{
+    right: -9px;
   }
-  .ticket-perforation .ticket-notch.top{
-    left:-24px;
-    top:calc(50% - 9px);
+  .receipt-side-header{
+    text-align: center;
   }
-  .ticket-perforation .ticket-notch.bottom{
-    right:-24px;
-    top:calc(50% - 9px);
+  .receipt-side-header h3{
+    font-size: 19px;
   }
   .receipt-actions{
-    flex-direction:column;
-    gap:8px;
+    flex-direction: column;
+    gap: 8px;
   }
   .receipt-actions .btn{
-    width:100%;
+    width: 100%;
   }
 }
 @media (max-width:480px){

@@ -337,101 +337,76 @@ orderForm.addEventListener('submit', e => {
 });
 
 function renderReceipt(order){
-  const totalItemsCount = order.items.reduce((sum, it) => sum + it.qty, 0);
-
   receiptContent.innerHTML = `
-    <div class="ticket-grid">
-      <!-- Left Column: Status, Customer Info & Total -->
-      <div class="ticket-col-left">
-        <div class="ticket-brand-row">
-          <img src="assets/croonies_logo.png" alt="Croonies" class="ticket-logo">
-          <span class="ticket-date">${formatDateID(order.pickupDate)}</span>
-        </div>
-        
-        <div class="ticket-status-head">
-          <div class="ticket-check-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </div>
-          <div>
-            <h4>Pesanan Berhasil!</h4>
-            <div class="ticket-order-badge">No. ${order.orderCode}</div>
-          </div>
-        </div>
+    <div class="ticket-header">
+      <div class="ticket-check-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h4 class="ticket-title">Pesanan Berhasil!</h4>
+      <div class="ticket-order-badge">No. Order: <span>#${order.orderCode}</span></div>
+      <div class="ticket-meta-subtitle">
+        <span>${order.fullName}</span> • <span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span>
+      </div>
+    </div>
 
-        <div class="ticket-info-group">
-          <div class="ticket-info-row"><span>Pemesan</span><strong>${order.fullName}</strong></div>
-          <div class="ticket-info-row"><span>Status</span><span>${order.pemesanType}</span></div>
-          ${order.pemesanType === 'Mahasiswa UNJ' ? `
-          <div class="ticket-info-row"><span>Prodi/Fak</span><span>${order.prodi || '-'} / ${order.fakultas || '-'}</span></div>
-          ` : `
-          <div class="ticket-info-row"><span>Domisili</span><span>${order.domisili || '-'}</span></div>
-          `}
-          <div class="ticket-info-row"><span>Ambil</span><span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span></div>
-        </div>
+    <div class="ticket-divider">
+      <div class="ticket-notch notch-left"></div>
+      <div class="ticket-divider-line"></div>
+      <div class="ticket-notch notch-right"></div>
+    </div>
 
-        <div class="ticket-total-box">
-          <div class="ticket-total-row">
-            <span>Total Bayar</span>
-            <strong>${formatRupiah(order.total)}</strong>
-          </div>
-          <div class="ticket-sub-row">
-            <span>Metode Bayar</span>
-            <span>${order.payMethod}</span>
-          </div>
-          ${order.needsDp ? `
-          <div class="ticket-sub-row dp-highlight">
-            <span>Wajib DP 50%</span>
-            <strong>${formatRupiah(order.dpMinAmount)}</strong>
-          </div>
-          ` : ''}
-        </div>
+    <div class="ticket-body">
+      <div class="ticket-table-head">
+        <span class="t-col-num">№</span>
+        <span class="t-col-item">Item</span>
+        <span class="t-col-price">Harga</span>
       </div>
 
-      <!-- Ticket Perforation Divider -->
-      <div class="ticket-perforation">
-        <div class="ticket-notch top"></div>
-        <div class="ticket-line"></div>
-        <div class="ticket-notch bottom"></div>
-      </div>
-
-      <!-- Right Column: Itemized List, Notes & Footer -->
-      <div class="ticket-col-right">
-        <div class="ticket-items-head">
-          <span>Detail Pesanan</span>
-          <span>${totalItemsCount} item</span>
-        </div>
-
-        <div class="ticket-items-list">
-          ${order.items.map((it, idx) => `
-            <div class="ticket-item-row">
-              <span class="ticket-item-num">${idx + 1}</span>
-              <div class="ticket-item-detail">
-                <span class="ticket-item-name">${it.name}</span>
-                <span class="ticket-item-calc">${it.qty} x ${formatRupiah(it.price)}</span>
-              </div>
-              <span class="ticket-item-price">${formatRupiah(it.subtotal)}</span>
+      <div class="ticket-items-list">
+        ${order.items.map((it, idx) => `
+          <div class="ticket-item-row">
+            <span class="t-col-num">${idx + 1}</span>
+            <div class="t-col-item">
+              <span class="t-item-name">${it.name}</span>
+              <span class="t-item-calc">${it.qty} x ${formatRupiah(it.price)}</span>
             </div>
-          `).join('')}
-        </div>
+            <span class="t-col-price">${formatRupiah(it.subtotal)}</span>
+          </div>
+        `).join('')}
+      </div>
 
-        ${order.notes ? `
+      ${order.notes ? `
         <div class="ticket-notes-box">
           <span>Catatan:</span> ${order.notes}
         </div>
-        ` : ''}
+      ` : ''}
 
-        <div class="ticket-footer-row">
-          <div class="ticket-footer-text">
-            <span>Croonies Official</span>
-            <small>Seriously soft, honestly rich.</small>
-          </div>
-          <div class="ticket-social-tag">
-            <span>@croonies.id</span>
-          </div>
+      <div class="ticket-summary-card">
+        <div class="ticket-summary-row ticket-total-row">
+          <span class="ticket-total-label">Total</span>
+          <span class="ticket-total-amount">${formatRupiah(order.total)}</span>
         </div>
+        <div class="ticket-summary-row">
+          <span>Metode Pembayaran</span>
+          <span>${order.payMethod}</span>
+        </div>
+        ${order.needsDp ? `
+        <div class="ticket-summary-row ticket-dp-row">
+          <span>Wajib DP 50%</span>
+          <strong>${formatRupiah(order.dpMinAmount)}</strong>
+        </div>
+        ` : ''}
       </div>
+    </div>
+
+    <div class="ticket-footer">
+      <div class="ticket-footer-brand">
+        <img src="assets/croonies_logo.png" alt="Croonies" class="ticket-footer-logo">
+        <span>Seriously soft, honestly rich.</span>
+      </div>
+      <span class="ticket-footer-ig">@croonies.id</span>
     </div>
   `;
 }
