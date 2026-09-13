@@ -337,9 +337,9 @@ body.checkout-page-body {
   background: var(--cream);
   border: 1.5px solid var(--cream-2);
   border-radius: 14px;
-  padding: 4px;
+  padding: 5px;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .toggle-pill-option {
   flex: 1;
@@ -350,19 +350,28 @@ body.checkout-page-body {
   display: none;
 }
 .pill-text {
-  display: block;
-  text-align: center;
-  padding: 10px 14px;
-  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--brown);
   border-radius: 10px;
-  transition: all 0.2s ease;
+  user-select: none;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toggle-pill-option:hover .pill-text {
+  color: var(--brown-dark);
+  background: rgba(255, 255, 255, 0.45);
 }
 .toggle-pill-option input:checked + .pill-text {
   background: var(--white);
   color: var(--redvelvet);
-  box-shadow: 0 2px 10px rgba(59,36,21,0.08);
+  font-weight: 700;
+  box-shadow: 0 3px 12px rgba(59, 36, 21, 0.12);
+  border: 1px solid rgba(139, 30, 43, 0.12);
 }
 
 /* Schedule and DP Notices */
@@ -409,6 +418,13 @@ body.checkout-page-body {
 .pay-option:hover {
   border-color: var(--redvelvet);
   background: var(--white);
+}
+.pay-option:has(input:checked) {
+  border-color: var(--redvelvet);
+  background: var(--white);
+  box-shadow: 0 3px 12px rgba(139, 30, 43, 0.08);
+  font-weight: 600;
+  color: var(--redvelvet);
 }
 .pay-option input {
   accent-color: var(--redvelvet);
