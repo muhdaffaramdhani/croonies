@@ -454,7 +454,9 @@ function renderReceipt(order){
       useCORS: true,
       logging: false
     }).then(canvas => {
-      currentReceiptDataUrl = canvas.toDataURL('image/png');
+      // Auto-crop whitespace di atas
+      const croppedCanvas = cropCanvasWhitespaceTop(canvas, 20);
+      currentReceiptDataUrl = croppedCanvas.toDataURL('image/png');
 
       // Tampilkan GAMBAR HASIL GENERATE LANGSUNG di modal website (BUKAN DOM JS)
       previewContainer.innerHTML = `
@@ -466,7 +468,7 @@ function renderReceipt(order){
 
       // Coba salin ke clipboard jika didukung
       if (navigator.clipboard && window.ClipboardItem) {
-        canvas.toBlob(blob => {
+        croppedCanvas.toBlob(blob => {
           if (blob) {
             navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
@@ -479,6 +481,30 @@ function renderReceipt(order){
       previewContainer.innerHTML = `<div style="color:var(--brown);font-size:13px;padding:24px;text-align:center;">Gagal memuat preview struk. Silakan coba klik download ulang struk.</div>`;
     });
   }, 70);
+}
+
+function cropCanvasWhitespaceTop(canvas, padding = 20) {
+  const ctx = canvas.getContext('2d');
+  const { width, height } = canvas;
+  const data = ctx.getImageData(0, 0, width, height).data;
+  let firstContentRow = 0;
+  outer: for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
+      if (a > 20 && (r < 245 || g < 245 || b < 245)) {
+        firstContentRow = y;
+        break outer;
+      }
+    }
+  }
+  const cropY = Math.max(0, firstContentRow - padding);
+  const newHeight = height - cropY;
+  const newCanvas = document.createElement('canvas');
+  newCanvas.width = width;
+  newCanvas.height = newHeight;
+  newCanvas.getContext('2d').drawImage(canvas, 0, cropY, width, newHeight, 0, 0, width, newHeight);
+  return newCanvas;
 }
 
 function downloadReceiptFile(order){
