@@ -1067,6 +1067,8 @@ p{margin:0 0 1em;}
 .flatpickr-current-month span.cur-month {
   color: #FFFFFF !important;
   font-weight: 700 !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
@@ -1075,6 +1077,7 @@ p{margin:0 0 1em;}
   font-family: var(--font-heading) !important;
   font-weight: 700 !important;
   font-size: 15px !important;
+  margin-right: 6px !important;
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months option {
@@ -1085,7 +1088,7 @@ p{margin:0 0 1em;}
   padding: 8px !important;
 }
 
-/* Sembunyikan fitur ganti tahun */
+/* Sembunyikan fitur ganti tahun & beri jarak rapi */
 .flatpickr-current-month .numInputWrapper span.arrowUp,
 .flatpickr-current-month .numInputWrapper span.arrowDown {
   display: none !important;
@@ -1093,6 +1096,8 @@ p{margin:0 0 1em;}
 
 .flatpickr-current-month .numInputWrapper {
   pointer-events: none !important;
+  display: inline-block !important;
+  margin-left: 2px !important;
 }
 
 .flatpickr-current-month input.cur-year {
@@ -1103,7 +1108,7 @@ p{margin:0 0 1em;}
   box-shadow: none !important;
   color: #FFFFFF !important;
   font-weight: 700 !important;
-  padding: 0 !important;
+  padding: 0 0 0 2px !important;
   margin: 0 !important;
   user-select: none !important;
 }
