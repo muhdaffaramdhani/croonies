@@ -67,23 +67,24 @@ function formatDateID(dateStr){
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }
-// Order number format: CR-DDMMYY-HHMM
-// DDMMYY = tanggal pengambilan (dari form), HHMM = jam saat order dibuat
+// Order number format: CR-DDMMYY-HHMMDDMMYY
+// DDMMYY = tanggal pengambilan pre-order (dari input tanggal)
+// HHMMDDMMYY = jam, menit, tanggal, bulan, 2 digit tahun saat order dibuat
 function generateOrderCode(pickupDate){
   const now = new Date();
   const pad = n => String(n).padStart(2,'0');
 
   // DDMMYY dari tanggal pengambilan
-  let pickupPart = '??????';
+  let pickupPart = `${pad(now.getDate())}${pad(now.getMonth()+1)}${String(now.getFullYear()).slice(2)}`;
   if (pickupDate) {
     const d = new Date(pickupDate + 'T00:00:00');
     pickupPart = `${pad(d.getDate())}${pad(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}`;
   }
 
-  // HHMM dari waktu order sekarang
-  const timePart = `${pad(now.getHours())}${pad(now.getMinutes())}`;
+  // HHMMDDMMYY dari jam, menit, dan tanggal pemesanan saat ini
+  const orderPart = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getDate())}${pad(now.getMonth()+1)}${String(now.getFullYear()).slice(2)}`;
 
-  return `CR-${pickupPart}-${timePart}`;
+  return `CR-${pickupPart}-${orderPart}`;
 }
 
 // ---------- Render menu ----------
@@ -186,6 +187,58 @@ document.getElementById('openCartBtn').addEventListener('click', openDrawer);
 document.getElementById('closeCartBtn').addEventListener('click', closeDrawer);
 cartOverlay.addEventListener('click', closeDrawer);
 
+// ---------- Mobile Navigation Drawer ----------
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+const closeMobileNavBtn = document.getElementById('closeMobileNavBtn');
+const mobileNavLinks = document.querySelectorAll('.mobile-nav-link, #mobileNavOrderBtn');
+
+function openMobileNav(){
+  if (hamburgerBtn) {
+    hamburgerBtn.classList.add('active');
+    hamburgerBtn.setAttribute('aria-expanded', 'true');
+  }
+  if (mobileNavDrawer) mobileNavDrawer.classList.add('show');
+  if (mobileNavOverlay) mobileNavOverlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileNav(){
+  if (hamburgerBtn) {
+    hamburgerBtn.classList.remove('active');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+  }
+  if (mobileNavDrawer) mobileNavDrawer.classList.remove('show');
+  if (mobileNavOverlay) mobileNavOverlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+    if (mobileNavDrawer && mobileNavDrawer.classList.contains('show')) {
+      closeMobileNav();
+    } else {
+      openMobileNav();
+    }
+  });
+}
+if (closeMobileNavBtn) closeMobileNavBtn.addEventListener('click', closeMobileNav);
+if (mobileNavOverlay) mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+mobileNavLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    closeMobileNav();
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeMobileNav();
+    closeDrawer();
+  }
+});
+
 // ---------- Pemesan type toggle ----------
 const unjFields = document.getElementById('unjFields');
 const umumFields = document.getElementById('umumFields');
@@ -274,6 +327,11 @@ orderForm.addEventListener('submit', e => {
   receiptModal.classList.add('show');
   receiptOverlay.classList.add('show');
 
+  // Otomatis simpan & salin foto struk untuk dilampirkan
+  setTimeout(() => {
+    captureAndSaveReceipt(lastOrder, false);
+  }, 120);
+
   sendToWhatsApp(lastOrder);
 });
 
@@ -311,18 +369,39 @@ document.getElementById('closeReceiptBtn').addEventListener('click', () => {
   receiptOverlay.classList.remove('show');
 });
 
-// Download receipt as image (for buyer's personal record)
-document.getElementById('downloadReceiptBtn').addEventListener('click', () => {
-  html2canvas(receiptContent, { backgroundColor: '#FBF3E6', scale: 2, useCORS: true }).then(canvas => {
+// Otomatis membuat gambar struk, men-download file PNG, dan menyalin ke clipboard
+function captureAndSaveReceipt(order, showAlertOnError = false){
+  if (!receiptContent) return Promise.resolve();
+  return html2canvas(receiptContent, { backgroundColor: '#FBF3E6', scale: 2, useCORS: true }).then(canvas => {
+    // 1. Download file gambar struk
     const link = document.createElement('a');
-    link.download = `struk-${lastOrder ? lastOrder.orderCode : 'croonies'}.png`;
+    link.download = `struk-${order ? order.orderCode : 'croonies'}.png`;
     link.href = canvas.toDataURL('image/png');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }).catch(() => {
-    alert('Gagal membuat gambar struk. Coba screenshot manual struk di layar ya.');
+
+    // 2. Coba salin ke clipboard jika didukung browser
+    if (navigator.clipboard && window.ClipboardItem) {
+      canvas.toBlob(blob => {
+        if (blob) {
+          navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]).catch(() => {});
+        }
+      }, 'image/png');
+    }
+  }).catch(err => {
+    console.warn('Gagal capture struk:', err);
+    if (showAlertOnError) {
+      alert('Gagal mendownload gambar struk. Coba screenshot manual struk di layar ya.');
+    }
   });
+}
+
+// Download ulang struk tombol
+document.getElementById('downloadReceiptBtn').addEventListener('click', () => {
+  if (lastOrder) captureAndSaveReceipt(lastOrder, true);
 });
 
 // Build WhatsApp message text from an order
@@ -347,6 +426,7 @@ function buildWaMessage(o){
     msg += `Wajib DP minimal 50% (${formatRupiah(o.dpMinAmount)}) atau lebih.\n`;
   }
   if (o.notes) msg += `\nCatatan: ${o.notes}\n`;
+  msg += `\n📸 _(Foto struk bukti pemesanan telah tersimpan otomatis dan saya lampirkan di chat ini agar valid)_\n`;
   msg += `\nMohon konfirmasi ya, terima kasih 🙏`;
   return msg;
 }

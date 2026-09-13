@@ -17,17 +17,59 @@
 
   <header class="site-header" id="top">
     <div class="wrap header-inner">
-      <img src="assets/croonies_logo.png" alt="Croonies" class="logo">
-      <nav class="nav">
+      <a href="#top" class="logo-link">
+        <img src="assets/croonies_logo.png" alt="Croonies" class="logo">
+      </a>
+      <nav class="nav desktop-nav">
         <a href="#menu">Menu</a>
         <a href="#cara-pesan">Cara Pesan</a>
         <a href="#kontak">Kontak</a>
       </nav>
-      <button class="cart-pill" id="openCartBtn">
-        <span id="cartCount">0</span> item
-      </button>
+      <div class="header-actions">
+        <button class="cart-pill" id="openCartBtn" aria-label="Buka Keranjang">
+          <span id="cartCount">0</span> item
+        </button>
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Menu Navigasi Mobile">
+    <div class="mobile-nav-top">
+      <img src="assets/croonies_logo.png" alt="Croonies" class="mobile-nav-logo">
+      <button class="mobile-nav-close" id="closeMobileNavBtn" aria-label="Tutup Menu">&times;</button>
+    </div>
+    <div class="mobile-nav-links">
+      <a href="#menu" class="mobile-nav-link">
+        <span class="nav-icon">🍪</span>
+        <span>Menu</span>
+      </a>
+      <a href="#cara-pesan" class="mobile-nav-link">
+        <span class="nav-icon">📋</span>
+        <span>Cara Pesan</span>
+      </a>
+      <a href="#kontak" class="mobile-nav-link">
+        <span class="nav-icon">📍</span>
+        <span>Kontak &amp; Jadwal</span>
+      </a>
+    </div>
+    <div class="mobile-nav-footer">
+      <div class="mobile-nav-socials">
+        <a href="https://www.instagram.com/croonies.id/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <span>•</span>
+        <a href="https://www.tiktok.com/@croonies.id" target="_blank" rel="noopener noreferrer">TikTok</a>
+        <span>•</span>
+        <a href="https://wa.me/6282320538422" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </div>
+      <a href="#menu" class="btn btn-primary btn-full mobile-nav-order-btn" id="mobileNavOrderBtn">Pesan Sekarang</a>
+    </div>
+  </aside>
 
   <main>
 
@@ -282,7 +324,7 @@
       <div class="order-summary" id="orderSummary"></div>
 
       <div class="dp-notice" id="dpNotice" hidden>
-        Total order di atas Rp50.000, wajib DP minimal 50% terlebih dahulu sebelum diproses.
+        Total order di atas Rp100.000, wajib DP minimal 50% terlebih dahulu sebelum diproses.
       </div>
 
       <button type="submit" class="btn btn-primary btn-full">Kirim pesanan ke WhatsApp</button>
@@ -296,11 +338,13 @@
       <h3>Struk pesananmu</h3>
       <button class="close-btn" id="closeReceiptBtn">&times;</button>
     </div>
-    <p class="receipt-hint">Pesanan sudah terkirim ke WhatsApp admin. Struk ini untuk catatan pribadimu, bukan dikirim
-      otomatis.</p>
+    <div class="receipt-status-banner" id="receiptStatusBanner">
+      📸 <strong>Foto struk tersimpan otomatis!</strong><br>
+      Lampirkan / kirim foto struk ini di chat WhatsApp admin agar pesanan langsung valid.
+    </div>
     <div class="receipt" id="receiptContent"></div>
     <div class="receipt-actions">
-      <button class="btn btn-ghost" id="downloadReceiptBtn">Download struk</button>
+      <button class="btn btn-ghost" id="downloadReceiptBtn">Download ulang foto struk</button>
       <button class="btn btn-primary" id="sendWaBtn">Buka WhatsApp admin</button>
     </div>
   </div>
