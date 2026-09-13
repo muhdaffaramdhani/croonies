@@ -447,18 +447,18 @@ function renderAndGenerateReceipt(order){
  * @param {number} padding - Jumlah pixel padding di atas konten yang disisakan
  * @returns {HTMLCanvasElement}
  */
-function cropCanvasWhitespaceTop(canvas, padding = 20) {
+function cropCanvasWhitespaceTop(canvas, padding = 30) {
   const ctx = canvas.getContext('2d');
   const { width, height } = canvas;
   const data = ctx.getImageData(0, 0, width, height).data;
   let firstContentRow = 0;
 
+  // Threshold 180: skip putih/cream/border card, hanya tangkap teks gelap & ikon berwarna
   outer: for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * 4;
       const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
-      // Pixel dianggap konten jika cukup opak dan bukan putih murni
-      if (a > 20 && (r < 245 || g < 245 || b < 245)) {
+      if (a > 20 && (r < 180 || g < 180 || b < 180)) {
         firstContentRow = y;
         break outer;
       }
