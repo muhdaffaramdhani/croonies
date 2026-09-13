@@ -337,31 +337,102 @@ orderForm.addEventListener('submit', e => {
 });
 
 function renderReceipt(order){
-  const itemsHtml = order.items.map(it =>
-    `<div class="receipt-item"><span>${it.name} x${it.qty}</span><span>${formatRupiah(it.subtotal)}</span></div>`
-  ).join('');
+  const totalItemsCount = order.items.reduce((sum, it) => sum + it.qty, 0);
 
   receiptContent.innerHTML = `
-    <img src="assets/croonies_logo.png" alt="Croonies" class="receipt-logo">
-    <div class="receipt-tag">Seriously soft, honestly rich.</div>
-    <hr>
-    <div class="receipt-row"><span>No. Order</span><span>${order.orderCode}</span></div>
-    <div class="receipt-row"><span>Status</span><span>${order.pemesanType}</span></div>
-    <div class="receipt-row"><span>Nama</span><span>${order.fullName}</span></div>
-    ${order.pemesanType === 'Mahasiswa UNJ' ? `
-    <div class="receipt-row"><span>Prodi</span><span>${order.prodi || '-'}</span></div>
-    <div class="receipt-row"><span>Fakultas</span><span>${order.fakultas || '-'}</span></div>` : `
-    <div class="receipt-row"><span>Domisili</span><span>${order.domisili || '-'}</span></div>`}
-    <div class="receipt-row"><span>Ambil</span><span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span></div>
-    <div class="receipt-row"><span>Bayar</span><span>${order.payMethod}</span></div>
-    <hr>
-    ${itemsHtml}
-    <hr>
-    <div class="receipt-row"><strong>Total</strong><strong>${formatRupiah(order.total)}</strong></div>
-    ${order.needsDp ? `
-    <div class="receipt-row"><span>DP minimal 50%</span><span>${formatRupiah(order.dpMinAmount)}</span></div>
-    ` : ''}
-    ${order.notes ? `<hr><div class="receipt-row"><span>Catatan</span><span>${order.notes}</span></div>` : ''}
+    <div class="ticket-grid">
+      <!-- Left Column: Status, Customer Info & Total -->
+      <div class="ticket-col-left">
+        <div class="ticket-brand-row">
+          <img src="assets/croonies_logo.png" alt="Croonies" class="ticket-logo">
+          <span class="ticket-date">${formatDateID(order.pickupDate)}</span>
+        </div>
+        
+        <div class="ticket-status-head">
+          <div class="ticket-check-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h4>Pesanan Berhasil!</h4>
+            <div class="ticket-order-badge">No. ${order.orderCode}</div>
+          </div>
+        </div>
+
+        <div class="ticket-info-group">
+          <div class="ticket-info-row"><span>Pemesan</span><strong>${order.fullName}</strong></div>
+          <div class="ticket-info-row"><span>Status</span><span>${order.pemesanType}</span></div>
+          ${order.pemesanType === 'Mahasiswa UNJ' ? `
+          <div class="ticket-info-row"><span>Prodi/Fak</span><span>${order.prodi || '-'} / ${order.fakultas || '-'}</span></div>
+          ` : `
+          <div class="ticket-info-row"><span>Domisili</span><span>${order.domisili || '-'}</span></div>
+          `}
+          <div class="ticket-info-row"><span>Ambil</span><span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span></div>
+        </div>
+
+        <div class="ticket-total-box">
+          <div class="ticket-total-row">
+            <span>Total Bayar</span>
+            <strong>${formatRupiah(order.total)}</strong>
+          </div>
+          <div class="ticket-sub-row">
+            <span>Metode Bayar</span>
+            <span>${order.payMethod}</span>
+          </div>
+          ${order.needsDp ? `
+          <div class="ticket-sub-row dp-highlight">
+            <span>Wajib DP 50%</span>
+            <strong>${formatRupiah(order.dpMinAmount)}</strong>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Ticket Perforation Divider -->
+      <div class="ticket-perforation">
+        <div class="ticket-notch top"></div>
+        <div class="ticket-line"></div>
+        <div class="ticket-notch bottom"></div>
+      </div>
+
+      <!-- Right Column: Itemized List, Notes & Footer -->
+      <div class="ticket-col-right">
+        <div class="ticket-items-head">
+          <span>Detail Pesanan</span>
+          <span>${totalItemsCount} item</span>
+        </div>
+
+        <div class="ticket-items-list">
+          ${order.items.map((it, idx) => `
+            <div class="ticket-item-row">
+              <span class="ticket-item-num">${idx + 1}</span>
+              <div class="ticket-item-detail">
+                <span class="ticket-item-name">${it.name}</span>
+                <span class="ticket-item-calc">${it.qty} x ${formatRupiah(it.price)}</span>
+              </div>
+              <span class="ticket-item-price">${formatRupiah(it.subtotal)}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        ${order.notes ? `
+        <div class="ticket-notes-box">
+          <span>Catatan:</span> ${order.notes}
+        </div>
+        ` : ''}
+
+        <div class="ticket-footer-row">
+          <div class="ticket-footer-text">
+            <span>Croonies Official</span>
+            <small>Seriously soft, honestly rich.</small>
+          </div>
+          <div class="ticket-social-tag">
+            <span>@croonies.id</span>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -373,7 +444,7 @@ document.getElementById('closeReceiptBtn').addEventListener('click', () => {
 // Otomatis membuat gambar struk, men-download file PNG, dan menyalin ke clipboard
 function captureAndSaveReceipt(order, showAlertOnError = false){
   if (!receiptContent) return Promise.resolve();
-  return html2canvas(receiptContent, { backgroundColor: '#FBF3E6', scale: 2, useCORS: true }).then(canvas => {
+  return html2canvas(receiptContent, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true }).then(canvas => {
     // 1. Download file gambar struk
     const link = document.createElement('a');
     link.download = `struk-${order ? order.orderCode : 'croonies'}.png`;
