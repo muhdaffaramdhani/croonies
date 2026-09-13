@@ -483,7 +483,7 @@ function renderReceipt(order){
   }, 70);
 }
 
-function cropCanvasWhitespaceTop(canvas, padding = 30) {
+function cropCanvasWhitespaceTop(canvas, padding = 14) {
   const ctx = canvas.getContext('2d');
   const { width, height } = canvas;
   const data = ctx.getImageData(0, 0, width, height).data;

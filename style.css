@@ -651,6 +651,7 @@ p{margin:0 0 1em;}
   pointer-events: none;
   visibility: visible;
   opacity: 1;
+  padding-top: 12px !important;
 }
 
 /* Portrait Receipt Ticket (Reference Style: Payment Successful / Organic Blend) */
@@ -870,26 +871,25 @@ p{margin:0 0 1em;}
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1.5px dashed #E0D5C7;
-  height: 22px;
-  box-sizing: content-box;
 }
 .ticket-footer-brand {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transform: translateY(-5px);
+  position: relative;
+  top: -3px;
 }
 .ticket-footer-logo {
-  height: 13px;
+  height: 16px;
   width: auto;
   display: block;
   object-fit: contain;
-  object-position: left top;
+  vertical-align: middle;
 }
 .ticket-footer-brand span {
   font-size: 11px;
   color: var(--brown);
-  line-height: 1;
+  line-height: 1.2;
   display: inline-flex;
   align-items: center;
 }
@@ -900,7 +900,6 @@ p{margin:0 0 1em;}
   background: #F5ECE0;
   padding: 0 10px;
   border-radius: 100px;
-  line-height: 22px;
   height: 22px;
   display: inline-flex;
   align-items: center;
