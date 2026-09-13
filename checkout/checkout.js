@@ -332,77 +332,81 @@ function renderAndGenerateReceipt(order){
 
   // Render template unconstrained
   receiptTicketTemplate.innerHTML = `
-    <div class="ticket-header">
-      <div class="ticket-check-circle">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <h4 class="ticket-title">Pesanan Berhasil!</h4>
-      <div class="ticket-order-badge">No. Order: <span>#${order.orderCode}</span></div>
-      <div class="ticket-meta-subtitle">
-        <span>${order.fullName}</span> • <span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span>
-      </div>
+    <div class="ticket-watermark" aria-hidden="true">
+      <img src="/assets/croonies_logo.png" alt="">
     </div>
 
-    <div class="ticket-divider">
-      <div class="ticket-notch notch-left"></div>
-      <div class="ticket-divider-line"></div>
-      <div class="ticket-notch notch-right"></div>
-    </div>
-
-    <div class="ticket-body">
-      <div class="ticket-table-head">
-        <span class="t-col-num">№</span>
-        <span class="t-col-item">Item</span>
-        <span class="t-col-price">Harga</span>
+    <div class="ticket-content">
+      <div class="ticket-header">
+        <div class="ticket-check-circle">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h4 class="ticket-title">Pesanan Berhasil!</h4>
+        <div class="ticket-order-badge">No. Order: <span>#${order.orderCode}</span></div>
+        <div class="ticket-meta-subtitle">
+          <span>${order.fullName}</span> • <span>${formatDateID(order.pickupDate)}, ${order.pickupTime}</span>
+        </div>
       </div>
 
-      <div class="ticket-items-list">
-        ${order.items.map((it, idx) => `
-          <div class="ticket-item-row">
-            <span class="t-col-num">${idx + 1}</span>
-            <div class="t-col-item">
-              <span class="t-item-name">${it.name}</span>
-              <span class="t-item-calc">${it.qty} x ${formatRupiah(it.price)}</span>
+      <div class="ticket-divider">
+        <div class="ticket-notch notch-left"></div>
+        <div class="ticket-divider-line"></div>
+        <div class="ticket-notch notch-right"></div>
+      </div>
+
+      <div class="ticket-body">
+        <div class="ticket-table-head">
+          <span class="t-col-num">№</span>
+          <span class="t-col-item">Item</span>
+          <span class="t-col-price">Harga</span>
+        </div>
+
+        <div class="ticket-items-list">
+          ${order.items.map((it, idx) => `
+            <div class="ticket-item-row">
+              <span class="t-col-num">${idx + 1}</span>
+              <div class="t-col-item">
+                <span class="t-item-name">${it.name}</span>
+                <span class="t-item-calc">${it.qty} x ${formatRupiah(it.price)}</span>
+              </div>
+              <span class="t-col-price">${formatRupiah(it.subtotal)}</span>
             </div>
-            <span class="t-col-price">${formatRupiah(it.subtotal)}</span>
+          `).join('')}
+        </div>
+
+        ${order.notes ? `
+          <div class="ticket-notes-box">
+            <span>Catatan:</span> ${order.notes}
           </div>
-        `).join('')}
-      </div>
-
-      ${order.notes ? `
-        <div class="ticket-notes-box">
-          <span>Catatan:</span> ${order.notes}
-        </div>
-      ` : ''}
-
-      <div class="ticket-summary-card">
-        <div class="ticket-summary-row ticket-total-row">
-          <span class="ticket-total-label">Total</span>
-          <span class="ticket-total-amount">${formatRupiah(order.total)}</span>
-        </div>
-        <div class="ticket-summary-row">
-          <span>Metode Pembayaran</span>
-          <span>${order.payMethod}</span>
-        </div>
-        ${order.needsDp ? `
-        <div class="ticket-summary-row ticket-dp-row">
-          <span>Wajib DP 50%</span>
-          <strong>${formatRupiah(order.dpMinAmount)}</strong>
-        </div>
         ` : ''}
-      </div>
-    </div>
 
-    <div class="ticket-footer">
-      <div class="ticket-footer-brand">
-        <img src="/assets/croonies_logo.png" alt="Croonies" class="ticket-footer-logo">
-        <span>Seriously soft, honestly rich.</span>
+        <div class="ticket-summary-card">
+          <div class="ticket-summary-row ticket-total-row">
+            <span class="ticket-total-label">Total</span>
+            <span class="ticket-total-amount">${formatRupiah(order.total)}</span>
+          </div>
+          <div class="ticket-summary-row">
+            <span>Metode Pembayaran</span>
+            <span>${order.payMethod}</span>
+          </div>
+          ${order.needsDp ? `
+          <div class="ticket-summary-row ticket-dp-row">
+            <span>Wajib DP 50%</span>
+            <strong>${formatRupiah(order.dpMinAmount)}</strong>
+          </div>
+          ` : ''}
+        </div>
       </div>
-      <span class="ticket-footer-ig">@croonies.id</span>
+
+      <div class="ticket-footer">
+        <span class="ticket-footer-tagline">Seriously soft, honestly rich.</span>
+        <span class="ticket-footer-ig">@croonies.id</span>
+      </div>
     </div>
   `;
+
 
   // Pastikan font (Baloo 2 / Poppins) sudah SELESAI di-load sebelum di-capture.
   // Tanpa ini, teks bisa reflow di tengah proses html2canvas (posisi teks jadi
@@ -413,7 +417,7 @@ function renderAndGenerateReceipt(order){
     : Promise.resolve();
 
   // Pastikan juga logo footer sudah selesai dimuat (kalau belum, tunggu load/error-nya)
-  const logoImg = receiptTicketTemplate.querySelector('.ticket-footer-logo');
+  const logoImg = receiptTicketTemplate.querySelector('.ticket-watermark img');
   const waitForLogo = (logoImg && !logoImg.complete)
     ? new Promise(resolve => {
         logoImg.addEventListener('load', resolve, { once: true });
@@ -425,11 +429,24 @@ function renderAndGenerateReceipt(order){
     // Tunggu 2 animation frame ekstra supaya browser sempat repaint
     // dengan font final sebelum di-capture.
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      html2canvas(receiptTicketTemplate, {
+      // foreignObjectRendering: true membuat html2canvas menggambar teks
+      // lewat mesin render BROWSER ASLI (via SVG <foreignObject>), bukan
+      // mesin ukur-huruf manual bawaan html2canvas yang sering meleset
+      // menghitung metrik vertikal font custom (ini akar penyebab teks
+      // "turun" tidak simetris dengan kotak background-nya).
+      const renderOptions = {
         backgroundColor: '#FFFFFF',
         scale: 2,
         useCORS: true,
-        logging: false
+        logging: false,
+        foreignObjectRendering: true
+      };
+
+      html2canvas(receiptTicketTemplate, renderOptions).catch(err => {
+        // Beberapa browser lama tidak mendukung foreignObjectRendering
+        // dengan baik -> fallback ke mode default html2canvas.
+        console.warn('foreignObjectRendering gagal, fallback ke mode default:', err);
+        return html2canvas(receiptTicketTemplate, { ...renderOptions, foreignObjectRendering: false });
       }).then(canvas => {
         // Auto-crop whitespace di atas (hanya jika ada ruang transparan sebelum card)
         const croppedCanvas = cropCanvasWhitespaceTop(canvas);
