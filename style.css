@@ -877,9 +877,10 @@ p{margin:0 0 1em;}
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  transform: translateY(-5px);
 }
 .ticket-footer-logo {
-  height: 14px;
+  height: 13px;
   width: auto;
   display: block;
   object-fit: contain;
