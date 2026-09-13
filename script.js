@@ -280,7 +280,8 @@ function renderOrderSummary(){
     return `<div class="sum-line"><span>${p.name} x${qty}</span><span>${formatRupiah(p.price*qty)}</span></div>`;
   }).join('');
   orderSummary.innerHTML = lines + `<div class="sum-line sum-total"><span>Total</span><span>${formatRupiah(total)}</span></div>`;
-  dpNotice.hidden = total <= DP_THRESHOLD;
+  dpNotice.hidden = total < DP_THRESHOLD;
+  dpNotice.innerHTML = `Total order ${formatRupiah(DP_THRESHOLD)} ke atas, wajib DP minimal 50% terlebih dahulu sebelum diproses.`;
 }
 
 document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
@@ -309,7 +310,7 @@ orderForm.addEventListener('submit', e => {
   const notes = document.getElementById('notes').value.trim();
 
   const total = cartTotal();
-  const needsDp = total > DP_THRESHOLD;
+  const needsDp = total >= DP_THRESHOLD;
   const dpMinAmount = needsDp ? Math.round(total * DP_PERCENT) : 0;
   const orderCode = generateOrderCode(pickupDate);
 
