@@ -833,24 +833,30 @@ p{margin:0 0 1em;}
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
-  padding-top: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  margin-bottom: 2px;
   border-top: 1px dashed #E0D5C7;
 }
 .ticket-footer-brand {
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 22px;
 }
 .ticket-footer-logo {
   height: 20px;
   width: auto;
   display: block;
+  object-fit: contain;
 }
 .ticket-footer-brand span {
   font-size: 11px;
   color: var(--brown);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  transform: translateY(-0.5px);
 }
 .ticket-footer-ig {
   font-size: 11px;
@@ -860,6 +866,10 @@ p{margin:0 0 1em;}
   padding: 4px 10px;
   border-radius: 100px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  box-sizing: border-box;
 }
 
 /* Right Column: Info & Action Controls */

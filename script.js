@@ -48,6 +48,16 @@ const DP_PERCENT = 0.5;
 
 // ---------- State ----------
 let cart = {}; // id -> qty
+try {
+  const saved = localStorage.getItem('croonies_cart');
+  if (saved) cart = JSON.parse(saved);
+} catch (e) {}
+
+function syncCartStorage(){
+  try {
+    localStorage.setItem('croonies_cart', JSON.stringify(cart));
+  } catch (e) {}
+}
 
 // ---------- Utils ----------
 function formatRupiah(n){
@@ -129,6 +139,7 @@ function renderMenu(){
       const current = cart[id] || 0;
       const next = Math.max(0, current + delta);
       if (next === 0) delete cart[id]; else cart[id] = next;
+      syncCartStorage();
       renderMenu();
       renderCart();
     };
@@ -284,8 +295,17 @@ function renderOrderSummary(){
   dpNotice.innerHTML = `Total order ${formatRupiah(DP_THRESHOLD)} ke atas, wajib DP minimal 50% terlebih dahulu sebelum diproses.`;
 }
 
-document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
-document.getElementById('drawerCheckoutBtn').addEventListener('click', openCheckout);
+function goToCheckoutPage(){
+  if (cartCount() === 0){
+    alert('Silakan pilih minimal 1 menu Croonies terlebih dahulu.');
+    return;
+  }
+  syncCartStorage();
+  window.location.href = 'checkout/';
+}
+
+document.getElementById('checkoutBtn').addEventListener('click', goToCheckoutPage);
+document.getElementById('drawerCheckoutBtn').addEventListener('click', goToCheckoutPage);
 document.getElementById('closeCheckoutBtn').addEventListener('click', closeCheckout);
 checkoutOverlay.addEventListener('click', closeCheckout);
 
@@ -331,6 +351,7 @@ orderForm.addEventListener('submit', e => {
 
   // Kosongkan keranjang belanja setelah checkout & kirim WA
   cart = {};
+  syncCartStorage();
   renderCart();
   renderMenu();
   orderForm.reset();
