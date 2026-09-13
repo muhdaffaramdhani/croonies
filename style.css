@@ -873,12 +873,14 @@ p{margin:0 0 1em;}
   align-items: center;
   gap: 8px;
   height: 22px;
+  transform: translateY(-2px);
 }
 .ticket-footer-logo {
   height: 18px;
   width: auto;
   display: block;
   object-fit: contain;
+  transform: translateY(1px);
 }
 .ticket-footer-brand span {
   font-size: 11px;
