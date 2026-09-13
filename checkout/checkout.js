@@ -301,8 +301,12 @@ function initDateConstraint(){
         placeholder: 'dd/mm/yyyy',
         disableMobile: true,
         monthSelectorType: 'static',
-        allowInput: true,
+        allowInput: false,
         onReady: function(selectedDates, dateStr, instance) {
+          if (instance.altInput) {
+            instance.altInput.setAttribute('inputmode', 'none');
+            instance.altInput.setAttribute('readonly', 'readonly');
+          }
           if (instance.currentYearElement) {
             instance.currentYearElement.disabled = true;
             instance.currentYearElement.tabIndex = -1;
