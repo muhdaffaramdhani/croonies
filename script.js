@@ -325,6 +325,7 @@ if (homePickupDateInput && window.flatpickr) {
     minDate: minDateStr,
     placeholder: 'dd/mm/yyyy',
     disableMobile: true,
+    monthSelectorType: 'static',
     allowInput: true
   });
   fpHomePickupDate.clear();
@@ -682,7 +683,11 @@ function buildWaMessage(o){
 }
 
 function sendToWhatsApp(order){
-  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMessage(order))}`;
+  const msg = buildWaMessage(order);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).catch(() => {});
+  }
+  const url = `https://api.whatsapp.com/send?phone=${WA_NUMBER}&text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
 

@@ -255,6 +255,30 @@ function handleStatusChange(){
 typeUnj.addEventListener('change', handleStatusChange);
 typeUmum.addEventListener('change', handleStatusChange);
 
+// Toggle Metode Pengambilan: Ambil Sendiri vs Delivery
+const methodAmbil = document.getElementById('methodAmbil');
+const methodDelivery = document.getElementById('methodDelivery');
+const deliveryAddressRow = document.getElementById('deliveryAddressRow');
+const deliveryAddressInput = document.getElementById('deliveryAddress');
+const pickupLocationNotice = document.getElementById('pickupLocationNotice');
+
+function handlePickupMethodChange(){
+  if (methodDelivery && methodDelivery.checked) {
+    if (deliveryAddressRow) deliveryAddressRow.style.display = 'block';
+    if (deliveryAddressInput) deliveryAddressInput.required = true;
+    if (pickupLocationNotice) pickupLocationNotice.style.display = 'none';
+  } else {
+    if (deliveryAddressRow) deliveryAddressRow.style.display = 'none';
+    if (deliveryAddressInput) {
+      deliveryAddressInput.required = false;
+      deliveryAddressInput.value = '';
+    }
+    if (pickupLocationNotice) pickupLocationNotice.style.display = 'block';
+  }
+}
+if (methodAmbil) methodAmbil.addEventListener('change', handlePickupMethodChange);
+if (methodDelivery) methodDelivery.addEventListener('change', handlePickupMethodChange);
+
 let fpPickupDate = null;
 
 // Minimum date = tomorrow (kosong tanpa default, format dd/mm/yyyy)
@@ -275,6 +299,7 @@ function initDateConstraint(){
         minDate: minDateStr,
         placeholder: 'dd/mm/yyyy',
         disableMobile: true,
+        monthSelectorType: 'static',
         allowInput: true
       });
     } else {
@@ -316,6 +341,15 @@ checkoutOrderForm.addEventListener('submit', e => {
   const prodi = prodiInput.value.trim();
   const fakultas = fakultasInput.value.trim();
   const domisili = domisiliInput.value.trim();
+  const pickupMethod = document.querySelector('input[name="pickupMethod"]:checked') ? document.querySelector('input[name="pickupMethod"]:checked').value : 'Ambil Sendiri';
+  const deliveryAddress = deliveryAddressInput ? deliveryAddressInput.value.trim() : '';
+
+  if (pickupMethod === 'Delivery' && !deliveryAddress) {
+    alert('Silakan tuliskan alamat lengkap pengiriman.');
+    if (deliveryAddressInput) deliveryAddressInput.focus();
+    return;
+  }
+
   const pickupTime = document.getElementById('pickupTime').value;
   const payMethod = document.querySelector('input[name="payMethod"]:checked').value;
   const notes = document.getElementById('notes').value.trim();
@@ -326,7 +360,9 @@ checkoutOrderForm.addEventListener('submit', e => {
   const orderCode = generateOrderCode(pickupDate);
 
   lastOrder = {
-    orderCode, pemesanType, fullName, domisili, prodi, fakultas, pickupDate, pickupTime, payMethod, notes,
+    orderCode, pemesanType, fullName, domisili, prodi, fakultas,
+    pickupMethod, deliveryAddress,
+    pickupDate, pickupTime, payMethod, notes,
     items: Object.entries(cart).map(([id, qty]) => {
       const p = PRODUCTS.find(p => p.id === id);
       return { name: p.name, qty, price: p.price, subtotal: p.price * qty };
@@ -351,6 +387,7 @@ checkoutOrderForm.addEventListener('submit', e => {
   checkoutOrderForm.reset();
   initDateConstraint();
   handleStatusChange();
+  handlePickupMethodChange();
 });
 
 // ---------- Receipt Rendering & Image Generation ----------
@@ -419,6 +456,10 @@ function renderAndGenerateReceipt(order){
           <div class="ticket-summary-row ticket-total-row">
             <span class="ticket-total-label">Total</span>
             <span class="ticket-total-amount">${formatRupiah(order.total)}</span>
+          </div>
+          <div class="ticket-summary-row">
+            <span>Metode</span>
+            <span>${order.pickupMethod || 'Ambil Sendiri'}</span>
           </div>
           <div class="ticket-summary-row">
             <span>Metode Pembayaran</span>
@@ -630,7 +671,12 @@ function buildWaMessage(o){
   msg += `${itemLines}\n\n`;
 
   msg += `💰 *Subtotal    : ${formatWaPrice(o.total)}*\n`;
-  msg += `📍 Metode     : Ambil Sendiri (Gratis antar)\n`;
+  if (o.pickupMethod === 'Delivery') {
+    msg += `📍 Metode     : 🛵 Delivery (Pengiriman)\n`;
+    msg += `🏠 Alamat     : ${o.deliveryAddress || '-'}\n`;
+  } else {
+    msg += `📍 Metode     : 📍 Ambil Sendiri (UNJ - Gratis)\n`;
+  }
   msg += `✨ *Total Akhir : ${formatWaPrice(o.total)}*\n`;
 
   if (o.needsDp){
@@ -652,11 +698,34 @@ function buildWaMessage(o){
 }
 
 function sendToWhatsApp(order){
-  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMessage(order))}`;
+  const msg = buildWaMessage(order);
+
+  // Otomatis salin teks ke clipboard - solusi terbaik jika WhatsApp Desktop Windows merusak emoji URL
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).catch(() => {});
+  }
+
+  const url = `https://api.whatsapp.com/send?phone=${WA_NUMBER}&text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
 
 // Modal controls
+const copyWaMsgBtn = document.getElementById('copyWaMsgBtn');
+if (copyWaMsgBtn) {
+  copyWaMsgBtn.addEventListener('click', () => {
+    if (!lastOrder) return;
+    const msg = buildWaMessage(lastOrder);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(msg).then(() => {
+        const origHtml = copyWaMsgBtn.innerHTML;
+        copyWaMsgBtn.innerHTML = '✅ Teks Berhasil Disalin!';
+        setTimeout(() => { copyWaMsgBtn.innerHTML = origHtml; }, 2500);
+      }).catch(() => {
+        alert('Gagal menyalin teks ke clipboard.');
+      });
+    }
+  });
+}
 closeReceiptBtn.addEventListener('click', () => {
   receiptModal.classList.remove('show');
   receiptOverlay.classList.remove('show');
