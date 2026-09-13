@@ -4,35 +4,35 @@ const PRODUCTS = [
     id: 'cookie-original',
     name: 'Soft Cookies Original',
     price: 7000,
-    img: '../assets/cookies_original.png',
+    img: '/assets/cookies_original.png',
     desc: 'Cookies original dengan potongan dark chocolate chunks.'
   },
   {
     id: 'cookie-matcha',
     name: 'Soft Cookies Matcha',
     price: 7000,
-    img: '../assets/cookies_matcha.png',
+    img: '/assets/cookies_matcha.png',
     desc: 'Cookies matcha dengan potongan dark chocolate chunks.'
   },
   {
     id: 'cookie-redvelvet',
     name: 'Soft Cookies Red Velvet',
     price: 7000,
-    img: '../assets/cookies_red_velvet.png',
+    img: '/assets/cookies_red_velvet.png',
     desc: 'Cookies Red velvet dengan potongan white chocolate.'
   },
   {
     id: 'cheese-brownies',
     name: 'Cheese Brownies',
     price: 6000,
-    img: '../assets/cheese_brownies.png',
+    img: '/assets/cheese_brownies.png',
     desc: 'Brownies fudgy dengan lapisan cheese di atasnya, per potong.'
   },
   {
     id: 'cheese-brownies-loyang',
     name: 'Cheese Brownies Loyang',
     price: 80000,
-    img: '../assets/cheese_brownies_loyang.png',
+    img: '/assets/cheese_brownies_loyang.png',
     desc: 'Satu loyang penuh cheese brownies, pas untuk berbagi rame-rame.'
   }
 ];
@@ -143,6 +143,8 @@ function renderCheckoutView(){
   checkoutLayout.style.display = 'grid';
   if (window.innerWidth <= 880) {
     checkoutMobileBar.style.display = 'block';
+  } else {
+    checkoutMobileBar.style.display = 'none';
   }
 
   // 1. Items List in Form
@@ -150,27 +152,27 @@ function renderCheckoutView(){
     const p = PRODUCTS.find(p => p.id === id);
     if (!p) return '';
     return `
-      <div class="checkout-item-row" data-id="${p.id}">
-        <img src="${p.img}" alt="${p.name}" class="item-thumb">
-        <div class="item-info">
-          <span class="item-info-name">${p.name}</span>
-          <span class="item-info-price">${formatRupiah(p.price)} / pcs</span>
-          <div class="item-qty-actions">
-            <button type="button" class="qty-btn-mini btn-dec" aria-label="Kurangi">&minus;</button>
-            <span class="qty-val-mini">${qty}</span>
-            <button type="button" class="qty-btn-mini btn-inc" aria-label="Tambah">&plus;</button>
+      <div class="checkout-item-card" data-id="${p.id}">
+        <img src="${p.img}" alt="${p.name}" class="item-img-preview">
+        <div class="item-meta">
+          <span class="item-name-text">${p.name}</span>
+          <span class="item-unit-price">${formatRupiah(p.price)} / pcs</span>
+          <div class="item-stepper">
+            <button type="button" class="step-btn btn-dec" aria-label="Kurangi">&minus;</button>
+            <span class="step-count">${qty}</span>
+            <button type="button" class="step-btn btn-inc" aria-label="Tambah">&plus;</button>
           </div>
         </div>
-        <div class="item-subtotal-col">
-          <span class="item-subtotal-amount">${formatRupiah(p.price * qty)}</span>
-          <button type="button" class="item-remove-btn btn-del" title="Hapus Item">&times; Hapus</button>
+        <div class="item-cost-side">
+          <span class="item-row-total">${formatRupiah(p.price * qty)}</span>
+          <button type="button" class="item-delete-btn btn-del">Hapus</button>
         </div>
       </div>
     `;
   }).join('');
 
   // Attach Item listeners
-  checkoutItemsList.querySelectorAll('.checkout-item-row').forEach(row => {
+  checkoutItemsList.querySelectorAll('.checkout-item-card').forEach(row => {
     const id = row.dataset.id;
     const btnInc = row.querySelector('.btn-inc');
     const btnDec = row.querySelector('.btn-dec');
@@ -186,7 +188,7 @@ function renderCheckoutView(){
     const p = PRODUCTS.find(p => p.id === id);
     if (!p) return '';
     return `
-      <div class="sum-row">
+      <div class="checkout-sum-row">
         <span>${p.name} (${qty}x)</span>
         <strong>${formatRupiah(p.price * qty)}</strong>
       </div>
@@ -199,7 +201,7 @@ function renderCheckoutView(){
 
   // 4. DP Alerts
   if (needsDp) {
-    dpAlertBox.style.display = 'flex';
+    dpAlertBox.style.display = 'block';
     dpAlertText.innerHTML = `Total pesanan ${formatRupiah(total)} (≥ Rp100.000), wajib DP minimal 50% (<strong>${formatRupiah(dpMinAmount)}</strong>) untuk konfirmasi proses pembuatan.`;
     summaryDpRow.style.display = 'flex';
     summaryDpAmount.textContent = formatRupiah(dpMinAmount);
@@ -387,7 +389,7 @@ function renderAndGenerateReceipt(order){
 
     <div class="ticket-footer">
       <div class="ticket-footer-brand">
-        <img src="../assets/croonies_logo.png" alt="Croonies" class="ticket-footer-logo">
+        <img src="/assets/croonies_logo.png" alt="Croonies" class="ticket-footer-logo">
         <span>Seriously soft, honestly rich.</span>
       </div>
       <span class="ticket-footer-ig">@croonies.id</span>
