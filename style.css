@@ -667,8 +667,14 @@ p{margin:0 0 1em;}
   height: auto;
   min-height: auto;
   overflow: visible;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.35;
+  /* Pakai Poppins (web font yang sudah dipastikan ter-load) alih-alih font
+     sistem OS. html2canvas tidak bisa membaca font sistem dengan akurat,
+     sehingga jatuh ke font pengganti dengan metrik baseline/line-height
+     berbeda dari tampilan asli di browser -> teks jadi terlihat "turun"
+     di dalam setiap kotak. Pakai web font eksplisit membuat hasil render
+     konsisten dengan tampilan di halaman. */
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.3;
   -webkit-font-smoothing: antialiased;
 }
 
