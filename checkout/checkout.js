@@ -437,17 +437,7 @@ function renderAndGenerateReceipt(order){
         logging: false
       };
 
-      // Catatan: foreignObjectRendering (mode render via SVG <foreignObject>
-      // browser asli) TIDAK dipakai di sini. Elemen struk sengaja diposisikan
-      // "position: fixed; left: -9999px" (di luar layar) supaya tidak terlihat
-      // pengguna, dan beberapa browser gagal me-rasterisasi <foreignObject>
-      // dengan benar untuk elemen yang posisinya jauh di luar viewport ->
-      // hasilnya kosong/blank tanpa error. Mode default (canvas manual)
-      // lebih lambat sedikit dalam presisi metrik font, tapi jauh lebih
-      // konsisten menghasilkan gambar (tidak pernah blank).
       html2canvas(receiptTicketTemplate, baseOptions).then(canvas => {
-        // Jaga-jaga tambahan: kalau ternyata canvas hasil capture kosong
-        // (mis. karena timing/asset belum siap), coba render ulang sekali.
         if (isCanvasBlank(canvas)) {
           console.warn('Hasil capture struk kosong, mencoba render ulang...');
           return html2canvas(receiptTicketTemplate, baseOptions);

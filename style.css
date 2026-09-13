@@ -653,7 +653,7 @@ p{margin:0 0 1em;}
   opacity: 1;
 }
 
-/* Portrait Receipt Ticket (Reference Style: Payment Successful / Organic Blend) */
+/* Portrait Receipt Ticket */
 .receipt-ticket {
   width: 360px;
   max-width: 360px;
@@ -668,19 +668,12 @@ p{margin:0 0 1em;}
   min-height: auto;
   overflow: visible;
   position: relative;
-  /* Pakai Poppins (web font yang sudah dipastikan ter-load) alih-alih font
-     sistem OS. html2canvas tidak bisa membaca font sistem dengan akurat,
-     sehingga jatuh ke font pengganti dengan metrik baseline/line-height
-     berbeda dari tampilan asli di browser -> teks jadi terlihat "turun"
-     di dalam setiap kotak. Pakai web font eksplisit membuat hasil render
-     konsisten dengan tampilan di halaman. */
   font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   line-height: 1.3;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Watermark logo: dekoratif saja, di belakang semua konten, tidak ikut
-   alur baca sehingga tidak akan pernah bentrok dengan teks manapun. */
+/* Watermark Logo */
 .ticket-watermark {
   position: absolute;
   top: 50%;
@@ -694,13 +687,6 @@ p{margin:0 0 1em;}
   align-items: center;
   justify-content: center;
 }
-.ticket-watermark img {
-  /* Disembunyikan; digunakan hanya sebagai sumber ukuran alami logo.
-     Rendering visual watermark dilakukan lewat .ticket-watermark-bg
-     (background-image) karena html2canvas tidak selalu menghormati
-     object-fit pada elemen <img>, sehingga logo bisa tampak gepeng. */
-  display: none;
-}
 .ticket-watermark-bg {
   width: 100%;
   height: 100%;
@@ -711,7 +697,7 @@ p{margin:0 0 1em;}
   filter: grayscale(100%);
 }
 
-/* Lapisan konten asli, digambar di atas watermark */
+/* Content Layer */
 .ticket-content {
   position: relative;
   z-index: 1;
@@ -868,10 +854,7 @@ p{margin:0 0 1em;}
   color: var(--brown-dark);
 }
 
-/* Summary Box - Soft filled card matching reference design (Payment
-   Successful / Organic Blend receipts). Text uses tight line-height (1)
-   with flexbox align-items:center so vertical position is controlled by
-   layout, not by font leading metrics that html2canvas renders inaccurately. */
+/* Summary Box */
 .ticket-summary-card {
   border-radius: 14px;
   padding: 16px 0 0;
@@ -963,7 +946,7 @@ p{margin:0 0 1em;}
   margin: 0;
 }
 .receipt-status-banner {
-  margin: 12px 0 14px;
+  margin: 12px 0 16px;
   background: #EAF6EC;
   border: 1.5px solid #81C784;
   color: #1B5E20;
@@ -973,39 +956,6 @@ p{margin:0 0 1em;}
   line-height: 1.45;
   text-align: center;
   font-weight: 600;
-}
-.receipt-side-info-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.side-info-item {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  background: #FFFFFF;
-  border: 1px solid #EDE4D8;
-  border-radius: 12px;
-  padding: 9px 12px;
-}
-.side-info-icon {
-  font-size: 16px;
-  line-height: 1.2;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.side-info-item strong {
-  display: block;
-  font-size: 12px;
-  color: var(--brown-dark);
-  margin-bottom: 1px;
-}
-.side-info-item small {
-  display: block;
-  font-size: 11px;
-  color: var(--brown);
-  line-height: 1.35;
 }
 .receipt-actions {
   display: flex;
