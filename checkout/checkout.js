@@ -31,7 +31,7 @@ const PRODUCTS = [
   {
     id: 'cheese-brownies-loyang',
     name: 'Cheese Brownies Loyang',
-    price: 80000,
+    price: 96000,
     img: '/assets/cheese_brownies_loyang.png',
     desc: 'Satu loyang penuh cheese brownies, pas untuk berbagi rame-rame.'
   }
