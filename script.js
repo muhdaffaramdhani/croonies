@@ -38,7 +38,7 @@ const PRODUCTS = [
     price: 96000,
     img: 'assets/cheese_brownies_loyang.png',
     imgClass: 'loyang',
-    desc: 'Satu loyang penuh cheese brownies, pas untuk berbagi rame-rame.'
+    desc: 'Satu loyang penuh cheese brownies ukuran 20x20 (kurang lebih 16 pcs potong), pas untuk berbagi rame-rame.'
   }
 ];
 
