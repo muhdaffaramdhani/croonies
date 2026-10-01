@@ -20,6 +20,14 @@
 </head>
 <body class="checkout-page-body">
 
+  <!-- Top Announcement Bar for UNJ Promo -->
+  <aside class="promo-announcement-bar">
+    <div class="wrap promo-bar-inner">
+      <span class="promo-fire">✨</span>
+      <span class="promo-text"><strong>PROMO SPESIAL UNJ (1–14 OKTOBER):</strong> Soft Cookies <strong>Rp6.000</strong>, Cheese Brownies <strong>Rp5.000</strong>, Loyang <strong>Rp80.000</strong>! 🎓</span>
+    </div>
+  </aside>
+
   <!-- Header (Matching Home Page .site-header) -->
   <header class="site-header">
     <div class="wrap header-inner">
@@ -93,12 +101,21 @@
               <div class="status-toggle-pills">
                 <label class="toggle-pill-option">
                   <input type="radio" name="pemesanType" value="Mahasiswa UNJ" checked id="typeUnj">
-                  <span class="pill-text">Mahasiswa UNJ</span>
+                  <span class="pill-text">🎓 Mahasiswa UNJ</span>
                 </label>
                 <label class="toggle-pill-option">
                   <input type="radio" name="pemesanType" value="Umum" id="typeUmum">
                   <span class="pill-text">Umum</span>
                 </label>
+              </div>
+            </div>
+
+            <!-- UNJ Promo Live Notification Card -->
+            <div class="unj-promo-alert-card" id="unjPromoNotice">
+              <div class="unj-promo-alert-icon">🎉</div>
+              <div class="unj-promo-alert-info">
+                <strong>Promo Khusus UNJ Aktif! (1–14 Oktober)</strong>
+                <p>Harga promo mahasiswa UNJ otomatis diterapkan pada keranjangmu: Cookies 6K, Brownies 5K, Loyang 80K.</p>
               </div>
             </div>
 
@@ -244,6 +261,7 @@
       <div class="mobile-bar-pricing">
         <span class="bar-total-label">Total Pembayaran</span>
         <strong class="bar-total-val" id="mobileBarTotal">Rp0</strong>
+        <small class="bar-promo-tag" id="mobileBarPromoHint" style="display: none;"></small>
         <small class="bar-dp-label" id="mobileBarDpHint" style="display: none;">Wajib DP 50%</small>
       </div>
       <button type="button" class="btn btn-primary" id="mobileBarSubmitBtn" style="padding: 12px 20px; font-size: 14.5px;">

@@ -4,6 +4,7 @@ const PRODUCTS = [
     id: 'cookie-original',
     name: 'Soft Cookies Original',
     price: 7000,
+    unjPrice: 6000,
     img: 'assets/cookies_original.png',
     imgClass: 'original',
     desc: 'Cookies original dengan potongan dark chocolate chunks.'
@@ -12,6 +13,7 @@ const PRODUCTS = [
     id: 'cookie-matcha',
     name: 'Soft Cookies Matcha',
     price: 7000,
+    unjPrice: 6000,
     img: 'assets/cookies_matcha.png',
     imgClass: 'matcha',
     desc: 'Cookies matcha dengan potongan dark chocolate chunks.'
@@ -20,6 +22,7 @@ const PRODUCTS = [
     id: 'cookie-redvelvet',
     name: 'Soft Cookies Red Velvet',
     price: 7000,
+    unjPrice: 6000,
     img: 'assets/cookies_red_velvet.png',
     imgClass: 'redvelvet',
     desc: 'Cookies Red velvet dengan potongan white chocolate.'
@@ -28,6 +31,7 @@ const PRODUCTS = [
     id: 'cheese-brownies',
     name: 'Cheese Brownies',
     price: 6000,
+    unjPrice: 5000,
     img: 'assets/cheese_brownies.png',
     imgClass: 'brownies',
     desc: 'Brownies fudgy dengan lapisan cheese di atasnya, per potong.'
@@ -36,6 +40,7 @@ const PRODUCTS = [
     id: 'cheese-brownies-loyang',
     name: 'Cheese Brownies Loyang',
     price: 96000,
+    unjPrice: 80000,
     img: 'assets/cheese_brownies_loyang.png',
     imgClass: 'loyang',
     desc: 'Satu loyang penuh cheese brownies ukuran 20x20 (kurang lebih 16 pcs potong), pas untuk berbagi rame-rame.'
@@ -45,6 +50,7 @@ const PRODUCTS = [
 const WA_NUMBER = '6282320538422';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
+const IS_UNJ_PROMO_ACTIVE = true; // Periode Promo UNJ: 1–14 Oktober
 
 // ---------- State ----------
 let cart = {}; // id -> qty
@@ -106,13 +112,18 @@ function renderMenu(){
     // Always keep reveal-item class so CSS transition is defined.
     // Add is-visible immediately if section already scrolled into view.
     const revealClass = menuAlreadyRevealed ? 'reveal-item is-visible' : 'reveal-item';
+    const displayPrice = p.unjPrice || p.price;
     return `
     <div class="menu-card ${revealClass}" data-id="${p.id}">
       <div class="menu-card-img-wrap ${p.imgClass}">
+        ${p.unjPrice ? `<span class="menu-promo-badge">Promo UNJ 1–14 Okt</span>` : ''}
         <img src="${p.img}" alt="${p.name}">
       </div>
       <h3>${p.name}</h3>
-      <div class="price">${formatRupiah(p.price)}</div>
+      <div class="price-box">
+        <span class="price-promo">${formatRupiah(displayPrice)}</span>
+        ${p.unjPrice ? `<s class="price-reguler">${formatRupiah(p.price)}</s><span class="price-unj-label">Khusus UNJ</span>` : ''}
+      </div>
       <p class="desc">${p.desc}</p>
       <div class="qty-row">
         <div class="qty-control">
@@ -120,7 +131,7 @@ function renderMenu(){
           <span>${qty}</span>
           <button class="inc" aria-label="Tambah">&plus;</button>
         </div>
-        ${qty === 0 ? `<button class="add-btn">Tambah</button>` : `<span style="font-size:12px;color:var(--brown);font-weight:600;">${formatRupiah(p.price*qty)}</span>`}
+        ${qty === 0 ? `<button class="add-btn">Tambah</button>` : `<span style="font-size:12px;color:var(--brown);font-weight:600;">${formatRupiah(displayPrice*qty)}</span>`}
       </div>
     </div>`;
   }).join('');

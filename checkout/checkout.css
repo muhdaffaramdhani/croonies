@@ -848,3 +848,185 @@ span.flatpickr-weekday {
 .flatpickr-time .numInputWrapper span.arrowDown:after {
   border-top-color: var(--redvelvet) !important;
 }
+
+/* ===================================================
+   PROMO SPESIAL UNJ (1–14 OKTOBER) - CHECKOUT PAGE
+   =================================================== */
+
+/* Top Announcement Banner */
+.promo-announcement-bar {
+  background: linear-gradient(90deg, #7C1F2A 0%, #5E141E 50%, #7C1F2A 100%);
+  color: #FFFDF9;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  border-bottom: 1.5px solid rgba(227, 168, 87, 0.4);
+  position: relative;
+  z-index: 99;
+}
+.promo-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.promo-fire {
+  font-size: 16px;
+}
+.promo-text {
+  line-height: 1.4;
+}
+.promo-text strong {
+  color: #FFD59E;
+  font-weight: 700;
+}
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  background: #E3A857;
+  color: #3B2415;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+  margin-left: 6px;
+}
+.promo-link:hover {
+  background: #FFDFAB;
+  transform: translateX(2px);
+}
+
+/* UNJ Promo Alert Card under Status */
+.unj-promo-alert-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #FFF7EC 0%, #FEEBD7 100%);
+  border: 1.5px solid #E3A857;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-top: 14px;
+  box-shadow: 0 4px 14px rgba(227, 168, 87, 0.15);
+  animation: fadeInDown 0.3s ease;
+}
+.unj-promo-alert-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.unj-promo-alert-info strong {
+  display: block;
+  font-size: 13.5px;
+  color: #7C1F2A;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.unj-promo-alert-info p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--brown);
+  line-height: 1.4;
+}
+
+/* Item Card with Active Promo */
+.checkout-item-card.has-unj-promo {
+  border-color: rgba(124, 31, 42, 0.32);
+  background: #FFFDF9;
+}
+.item-price-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.item-unit-price.promo {
+  font-weight: 700;
+  color: #7C1F2A;
+  font-size: 13px;
+}
+.item-unit-orig {
+  font-size: 11.5px;
+  color: #9C8979;
+  text-decoration: line-through;
+}
+.badge-unj-discount {
+  background: #7C1F2A;
+  color: #FFFDF9;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.2px;
+}
+.item-row-orig {
+  font-size: 11.5px;
+  color: #9C8979;
+  text-decoration: line-through;
+  text-align: right;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Summary Promo Callout & Lines */
+.summary-promo-callout {
+  background: #FFF5E8;
+  border: 1px solid #E3A857;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+.promo-callout-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.promo-callout-icon {
+  font-size: 20px;
+}
+.promo-callout-header strong {
+  font-size: 13px;
+  color: #7C1F2A;
+  display: block;
+}
+.promo-callout-header p {
+  margin: 0;
+  font-size: 11.5px;
+  color: #8C5824;
+  font-weight: 600;
+}
+
+.summary-subtotal-row span {
+  font-size: 13px;
+  color: var(--brown);
+}
+.summary-subtotal-row span:last-child {
+  font-weight: 600;
+  color: var(--brown-dark);
+}
+.summary-discount-row {
+  color: #7C1F2A !important;
+  font-weight: 600;
+}
+.summary-discount-row span {
+  color: #7C1F2A !important;
+  font-weight: 600;
+}
+.discount-negative {
+  color: #7C1F2A !important;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* Mobile Bar Promo Hint */
+.bar-promo-tag {
+  display: block;
+  font-size: 11px;
+  color: #7C1F2A;
+  font-weight: 700;
+  margin-top: 2px;
+}
+

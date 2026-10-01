@@ -1272,3 +1272,126 @@ span.flatpickr-weekday {
 .flatpickr-time .numInputWrapper span.arrowDown:after {
   border-top-color: var(--redvelvet) !important;
 }
+
+/* ===================================================
+   PROMO SPESIAL UNJ (1–14 OKTOBER)
+   =================================================== */
+
+/* Top Announcement Banner */
+.promo-announcement-bar {
+  background: linear-gradient(90deg, #7C1F2A 0%, #5E141E 50%, #7C1F2A 100%);
+  color: #FFFDF9;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  border-bottom: 1.5px solid rgba(227, 168, 87, 0.4);
+  position: relative;
+  z-index: 99;
+}
+.promo-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.promo-fire {
+  font-size: 16px;
+}
+.promo-text {
+  line-height: 1.4;
+}
+.promo-text strong {
+  color: #FFD59E;
+  font-weight: 700;
+}
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  background: #E3A857;
+  color: #3B2415;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+  margin-left: 6px;
+}
+.promo-link:hover {
+  background: #FFDFAB;
+  transform: translateX(2px);
+}
+
+/* Hero Price Tag Highlight */
+.hero-tag-promo {
+  background: #7C1F2A !important;
+  color: #FFFDF9 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(124, 31, 42, 0.25);
+  animation: pulsePromoTag 2.6s infinite;
+}
+@keyframes pulsePromoTag {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Menu Card Promo Styles */
+.menu-card-img-wrap {
+  position: relative;
+}
+.menu-promo-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #7C1F2A;
+  color: #FFFDF9;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(124, 31, 42, 0.28);
+  z-index: 2;
+  letter-spacing: 0.2px;
+}
+
+.price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.price-promo {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: #7C1F2A;
+}
+.price-reguler {
+  font-size: 13.5px;
+  color: #8C7A6B;
+  text-decoration: line-through;
+}
+.price-unj-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #FCEFD9;
+  color: #9E5616;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid #E3A857;
+}
+
+/* Cart Drawer Promo Notice */
+.drawer-unj-promo-alert {
+  background: #FFF4E5;
+  border: 1.5px solid #E3A857;
+  color: var(--brown-dark);
+  font-size: 12.5px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
