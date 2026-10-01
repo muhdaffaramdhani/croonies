@@ -27,7 +27,7 @@ const PRODUCTS = [
   {
     id: 'cheese-brownies',
     name: 'Cheese Brownies',
-    price: 7000,
+    price: 6000,
     unjPrice: 5000,
     img: '/assets/cheese_brownies.png',
     desc: 'Brownies fudgy dengan lapisan cheese di atasnya, per potong.'
@@ -35,7 +35,7 @@ const PRODUCTS = [
   {
     id: 'cheese-brownies-loyang',
     name: 'Cheese Brownies Loyang',
-    price: 95000,
+    price: 96000,
     unjPrice: 80000,
     img: '/assets/cheese_brownies_loyang.png',
     desc: 'Satu loyang penuh cheese brownies ukuran 20x20 (kurang lebih 16 pcs potong), pas untuk berbagi rame-rame.'
