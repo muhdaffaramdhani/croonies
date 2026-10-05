@@ -19,8 +19,8 @@
   <!-- Top Announcement Bar for UNJ Promo -->
   <aside class="promo-announcement-bar" id="promoBar">
     <div class="wrap promo-bar-inner">
-      <span class="promo-fire">✨</span>
-      <span class="promo-text"><strong>PROMO SPESIAL UNJ (1–14 OKTOBER):</strong> Soft Cookies <strong>Rp6.000</strong>, Cheese Brownies <strong>Rp5.000</strong>, Loyang <strong>Rp80.000</strong>! 🎓</span>
+      <span class="promo-badge">PROMO KHUSUS</span>
+      <span class="promo-text"><strong>PROMO SPESIAL UNJ (1–14 OKTOBER):</strong> Soft Cookies <strong>Rp6.000</strong>, Cheese Brownies <strong>Rp5.000</strong>, Loyang <strong>Rp80.000</strong>!</span>
       <a href="#menu" class="promo-link">Lihat Promo &rarr;</a>
     </div>
   </aside>
@@ -85,7 +85,7 @@
           <a href="#cara-pesan" class="btn btn-ghost">Cara pesan</a>
         </div>
         <div class="hero-price-tags">
-          <span class="hero-tag-promo">🎓 Promo UNJ: Cookies 6K • Brownies 5K</span>
+          <span class="hero-tag-promo">Promo UNJ: Cookies 6K • Brownies 5K</span>
           <span>Reguler mulai Rp6.000</span>
         </div>
       </div>
@@ -239,7 +239,7 @@
     <div class="drawer-body" id="cartItems"></div>
     <div class="drawer-foot">
       <div class="drawer-unj-promo-alert">
-        🎓 <strong>Mahasiswa UNJ?</strong> Potongan diskon promo 1–14 Okt akan otomatis diterapkan saat checkout!
+        <strong>Mahasiswa UNJ?</strong> Potongan diskon promo 1–14 Okt otomatis diterapkan saat checkout!
       </div>
       <div class="drawer-total">
         <span>Total</span>
@@ -349,19 +349,46 @@
       <!-- Sisi Kanan: Info & Tombol Aksi -->
       <div class="receipt-col-right">
         <div class="receipt-side-header">
-          <h3>Struk Pesananmu</h3>
-          <p class="receipt-side-subtitle">Pesanan telah berhasil dicatat. Silakan hubungi admin WhatsApp untuk konfirmasi dan proses pembuatan pesananmu.</p>
+          <div class="receipt-success-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Pesanan Berhasil Dicatat</span>
+          </div>
+          <h3>Pesanan Berhasil!</h3>
+          <p class="receipt-side-subtitle">Silakan melanjutkan pembayaran ke admin untuk konfirmasi dan proses pesananmu.</p>
+        </div>
+
+        <div class="receipt-payment-instruction-card">
+          <div class="instruction-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <strong>Silakan Melanjutkan Pembayaran ke Admin</strong>
+          </div>
+          <p>Kirimkan rincian pesanan ke admin WhatsApp dan selesaikan pembayaran agar pesananmu segera disiapkan.</p>
         </div>
 
         <div class="receipt-status-banner" id="receiptStatusBanner">
-          📸 Struk otomatis tersimpan di perangkatmu.
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Struk otomatis tersimpan di perangkatmu</span>
         </div>
 
         <div class="receipt-actions">
-          <button class="btn btn-primary btn-full" id="sendWaBtn">Buka WhatsApp Admin</button>
+          <button class="btn btn-primary btn-full" id="sendWaBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.979-.275-.1-.476-.15-.677.15-.2.301-.777.979-.953 1.18-.176.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.786-1.677-2.087-.176-.301-.019-.464.132-.614.136-.135.301-.351.451-.527.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.677-1.632-.928-2.238-.244-.59-.492-.51-.677-.52l-.577-.01c-.2 0-.526.075-.802.376-.276.301-1.053 1.028-1.053 2.508 0 1.48 1.078 2.909 1.228 3.11.15.2 2.122 3.24 5.14 4.544.718.31 1.279.495 1.716.634.721.229 1.378.197 1.898.119.58-.087 1.78-.727 2.031-1.429.251-.702.251-1.304.176-1.429-.076-.125-.276-.201-.577-.351zM12.04 2C6.51 2 2.02 6.49 2.02 12.02c0 1.98.58 3.82 1.58 5.37L2 22l4.76-1.54a10.02 10.02 0 0 0 5.28 1.48c5.53 0 10.02-4.49 10.02-10.02C22.06 6.49 17.57 2 12.04 2zm0 18.29c-1.61 0-3.11-.47-4.38-1.28l-.31-.2-2.82.91.93-2.75-.21-.33a8.26 8.26 0 0 1-1.27-4.44c0-4.57 3.72-8.29 8.29-8.29 4.57 0 8.29 3.72 8.29 8.29 0 4.57-3.72 8.29-8.29 8.29z"/>
+            </svg>
+            <span>Lanjut ke WhatsApp Admin</span>
+          </button>
           <button class="btn btn-ghost btn-full" id="downloadReceiptBtn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Download Ulang Struk
+            <span>Download Ulang Struk</span>
           </button>
         </div>
       </div>

@@ -515,6 +515,10 @@ function renderReceipt(order){
           </div>
           ` : ''}
         </div>
+
+        <div class="ticket-payment-note">
+          Silakan melanjutkan pembayaran ke admin
+        </div>
       </div>
 
       <div class="ticket-footer">
@@ -662,69 +666,57 @@ document.getElementById('downloadReceiptBtn').addEventListener('click', () => {
   }
 });
 
-// Helper emoji item
-function getItemEmoji(name){
-  const lower = (name || '').toLowerCase();
-  if (lower.includes('matcha')) return '🍵';
-  if (lower.includes('red velvet')) return '❤️';
-  if (lower.includes('original') || lower.includes('cookie')) return '🍪';
-  if (lower.includes('cheese') || lower.includes('keju')) return '🧀';
-  if (lower.includes('brownies') || lower.includes('cokelat') || lower.includes('loyang')) return '🍫';
-  return '✨';
-}
-
 // Build WhatsApp message text from an order
 function buildWaMessage(o){
   const divider = '━━━━━━━━━━━━━━━━━━━━━━';
   const formatWaPrice = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
   
   const itemLines = o.items.map(it => {
-    const emoji = getItemEmoji(it.name);
-    return `   • ${emoji} ${it.name} ×${it.qty} = ${formatWaPrice(it.subtotal)}`;
+    return `• ${it.name} ×${it.qty} = ${formatWaPrice(it.subtotal)}`;
   }).join('\n');
 
-  let msg = `🍫 *CROONIES - PESANAN* 🍫\n`;
+  let msg = `*CROONIES - PESANAN*\n`;
   msg += `${divider}\n`;
-  msg += `📋 No. Order : #${o.orderCode}\n`;
-  msg += `👤 Nama      : ${o.fullName}\n`;
-  msg += `🏷️ Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' 🎓' : ''}\n`;
+  msg += `No. Order : #${o.orderCode}\n`;
+  msg += `Nama      : ${o.fullName}\n`;
+  msg += `Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' (Promo 1–14 Okt)' : ''}\n`;
 
   if (o.pemesanType === 'Mahasiswa UNJ'){
-    msg += `🎓 Prodi     : ${o.prodi || '-'}\n`;
-    msg += `📚 Fakultas  : ${o.fakultas || '-'}\n`;
+    msg += `Prodi     : ${o.prodi || '-'}\n`;
+    msg += `Fakultas  : ${o.fakultas || '-'}\n`;
   } else {
-    msg += `🏡 Domisili  : ${o.domisili || '-'}\n`;
+    msg += `Domisili  : ${o.domisili || '-'}\n`;
   }
 
   if (o.pickupDate){
-    msg += `📅 Tgl Ambil : ${formatDateID(o.pickupDate)}\n`;
+    msg += `Tgl Ambil : ${formatDateID(o.pickupDate)}\n`;
   }
   if (o.pickupTime){
-    msg += `⏰ Jam Ambil : ${o.pickupTime} WIB\n`;
+    msg += `Jam Ambil : ${o.pickupTime} WIB\n`;
   }
 
   msg += `${divider}\n`;
-  msg += `📦 *Detail Pesanan:*\n`;
+  msg += `*Detail Pesanan:*\n`;
   msg += `${itemLines}\n\n`;
 
-  msg += `💰 *Subtotal    : ${formatWaPrice(o.total)}*\n`;
-  msg += `📍 Metode     : Ambil Sendiri (Gratis antar)\n`;
-  msg += `✨ *Total Akhir : ${formatWaPrice(o.total)}*\n`;
+  msg += `Subtotal    : ${formatWaPrice(o.total)}\n`;
+  msg += `Metode      : Ambil Sendiri (UNJ - Gratis)\n`;
+  msg += `*Total Akhir : ${formatWaPrice(o.total)}*\n`;
 
   if (o.needsDp){
-    msg += `⚠️ *Wajib DP   : ${formatWaPrice(o.dpMinAmount)} (50%)*\n`;
+    msg += `*Wajib DP   : ${formatWaPrice(o.dpMinAmount)} (50%)*\n`;
   }
 
-  const payEmoji = (o.payMethod || '').toLowerCase().includes('qris') ? '📱' : '💵';
-  msg += `💳 Pembayaran : ${payEmoji} ${o.payMethod}\n`;
+  msg += `Pembayaran  : ${o.payMethod}\n`;
 
   if (o.notes){
-    msg += `📝 Catatan    : ${o.notes}\n`;
+    msg += `Catatan     : ${o.notes}\n`;
   }
 
   msg += `${divider}\n`;
-  msg += `Terima kasih sudah memesan di Croonies! 🙏\n`;
-  msg += `Konfirmasi alamat & jadwal pickup/delivery ya kak.`;
+  msg += `Pesanan berhasil dicatat.\n`;
+  msg += `Silakan melanjutkan pembayaran ke admin via chat ini untuk konfirmasi pesanan.\n`;
+  msg += `Terima kasih!`;
 
   return msg;
 }

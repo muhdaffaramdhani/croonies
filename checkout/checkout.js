@@ -258,7 +258,13 @@ function renderCheckoutView(){
     breakdownHtml += `
       <div class="summary-promo-callout">
         <div class="promo-callout-header">
-          <span class="promo-callout-icon">🎉</span>
+          <div class="promo-callout-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="5" x2="5" y2="19"></line>
+              <circle cx="6.5" cy="6.5" r="2.5"></circle>
+              <circle cx="17.5" cy="17.5" r="2.5"></circle>
+            </svg>
+          </div>
           <div>
             <strong>Promo Spesial UNJ Aktif!</strong>
             <p>Hemat ${formatRupiah(discount)} (1–14 Okt)</p>
@@ -624,6 +630,10 @@ function renderAndGenerateReceipt(order){
           </div>
           ` : ''}
         </div>
+
+        <div class="ticket-payment-note">
+          Silakan melanjutkan pembayaran ke admin
+        </div>
       </div>
 
       <div class="ticket-footer">
@@ -777,79 +787,67 @@ function downloadReceiptFile(order){
   document.body.removeChild(link);
 }
 
-// Helper emoji item
-function getItemEmoji(name){
-  const lower = (name || '').toLowerCase();
-  if (lower.includes('matcha')) return '🍵';
-  if (lower.includes('red velvet')) return '❤️';
-  if (lower.includes('original') || lower.includes('cookie')) return '🍪';
-  if (lower.includes('cheese') || lower.includes('keju')) return '🧀';
-  if (lower.includes('brownies') || lower.includes('cokelat') || lower.includes('loyang')) return '🍫';
-  return '✨';
-}
-
 // Build WhatsApp text
 function buildWaMessage(o){
   const divider = '━━━━━━━━━━━━━━━━━━━━━━';
   const formatWaPrice = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
   
   const itemLines = o.items.map(it => {
-    const emoji = getItemEmoji(it.name);
     const promoHint = it.isPromo ? ` _(Promo UNJ ${formatWaPrice(it.price)}/pcs)_` : '';
-    return `   • ${emoji} ${it.name} ×${it.qty} = ${formatWaPrice(it.subtotal)}${promoHint}`;
+    return `• ${it.name} ×${it.qty} = ${formatWaPrice(it.subtotal)}${promoHint}`;
   }).join('\n');
 
-  let msg = `🍫 *CROONIES - PESANAN* 🍫\n`;
+  let msg = `*CROONIES - PESANAN*\n`;
   msg += `${divider}\n`;
-  msg += `📋 No. Order : #${o.orderCode}\n`;
-  msg += `👤 Nama      : ${o.fullName}\n`;
-  msg += `🏷️ Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' 🎓 (Promo 1–14 Okt)' : ''}\n`;
+  msg += `No. Order : #${o.orderCode}\n`;
+  msg += `Nama      : ${o.fullName}\n`;
+  msg += `Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' (Promo 1–14 Okt)' : ''}\n`;
 
   if (o.pemesanType === 'Mahasiswa UNJ'){
-    msg += `🎓 Prodi     : ${o.prodi || '-'}\n`;
-    msg += `📚 Fakultas  : ${o.fakultas || '-'}\n`;
+    msg += `Prodi     : ${o.prodi || '-'}\n`;
+    msg += `Fakultas  : ${o.fakultas || '-'}\n`;
   } else {
-    msg += `🏡 Domisili  : ${o.domisili || '-'}\n`;
+    msg += `Domisili  : ${o.domisili || '-'}\n`;
   }
 
   if (o.pickupDate){
-    msg += `📅 Tgl Ambil : ${formatDateID(o.pickupDate)}\n`;
+    msg += `Tgl Ambil : ${formatDateID(o.pickupDate)}\n`;
   }
   if (o.pickupTime){
-    msg += `⏰ Jam Ambil : ${o.pickupTime} WIB\n`;
+    msg += `Jam Ambil : ${o.pickupTime} WIB\n`;
   }
 
   msg += `${divider}\n`;
-  msg += `📦 *Detail Pesanan:*\n`;
+  msg += `*Detail Pesanan:*\n`;
   msg += `${itemLines}\n\n`;
 
   if (o.discount > 0) {
-    msg += `💰 *Subtotal    : ${formatWaPrice(o.subtotal)}*\n`;
-    msg += `🎉 *Diskon UNJ  : -${formatWaPrice(o.discount)} (Promo 1–14 Okt)*\n`;
+    msg += `Subtotal    : ${formatWaPrice(o.subtotal)}\n`;
+    msg += `Diskon UNJ  : -${formatWaPrice(o.discount)} (Promo 1–14 Okt)\n`;
   }
 
   if (o.pickupMethod === 'Delivery') {
-    msg += `📍 Metode     : 🛵 Delivery (Pengiriman)\n`;
-    msg += `🏠 Alamat     : ${o.deliveryAddress || '-'}\n`;
+    msg += `Metode      : Delivery (Pengiriman)\n`;
+    msg += `Alamat      : ${o.deliveryAddress || '-'}\n`;
   } else {
-    msg += `📍 Metode     : 📍 Ambil Sendiri (UNJ - Gratis)\n`;
+    msg += `Metode      : Ambil Sendiri (UNJ - Gratis)\n`;
   }
-  msg += `✨ *Total Akhir : ${formatWaPrice(o.total)}*\n`;
+  msg += `*Total Akhir : ${formatWaPrice(o.total)}*\n`;
 
   if (o.needsDp){
-    msg += `⚠️ *Wajib DP   : ${formatWaPrice(o.dpMinAmount)} (50%)*\n`;
+    msg += `*Wajib DP   : ${formatWaPrice(o.dpMinAmount)} (50%)*\n`;
   }
 
-  const payEmoji = (o.payMethod || '').toLowerCase().includes('qris') ? '📱' : '💵';
-  msg += `💳 Pembayaran : ${payEmoji} ${o.payMethod}\n`;
+  msg += `Pembayaran  : ${o.payMethod}\n`;
 
   if (o.notes){
-    msg += `📝 Catatan    : ${o.notes}\n`;
+    msg += `Catatan     : ${o.notes}\n`;
   }
 
   msg += `${divider}\n`;
-  msg += `Terima kasih sudah memesan di Croonies! 🙏\n`;
-  msg += `Konfirmasi alamat & jadwal pickup/delivery ya kak.`;
+  msg += `Pesanan berhasil dicatat.\n`;
+  msg += `Silakan melanjutkan pembayaran ke admin via chat ini untuk konfirmasi pesanan.\n`;
+  msg += `Terima kasih!`;
 
   return msg;
 }
