@@ -45,7 +45,23 @@ const PRODUCTS = [
 const WA_NUMBER = '6282320538422';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
-const IS_UNJ_PROMO_ACTIVE = true; // Periode Promo UNJ: 1–14 Oktober
+
+// Cek apakah tanggal berada dalam periode Promo UNJ (1–14 Oktober)
+function isDateInUnjPromoPeriod(dateStr){
+  if (!dateStr) {
+    const now = new Date();
+    return (now.getMonth() === 9 && now.getDate() >= 1 && now.getDate() <= 14);
+  }
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
+    return month === 10 && day >= 1 && day <= 14;
+  }
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d.getTime())) return false;
+  return d.getMonth() === 9 && d.getDate() >= 1 && d.getDate() <= 14;
+}
 
 // ---------- State ----------
 let cart = {};
@@ -69,14 +85,14 @@ function isCustomerUnj(){
   return Boolean(typeUnj && typeUnj.checked);
 }
 
-function getEffectivePrice(p, isUnj = isCustomerUnj()){
-  if (isUnj && IS_UNJ_PROMO_ACTIVE && p.unjPrice !== undefined) {
+function getEffectivePrice(p, isUnj = isCustomerUnj(), dateStr = (pickupDateInput ? pickupDateInput.value : '')){
+  if (isUnj && isDateInUnjPromoPeriod(dateStr) && p.unjPrice !== undefined) {
     return p.unjPrice;
   }
   return p.price;
 }
 
-function calculateOrderTotals(isUnj = isCustomerUnj()){
+function calculateOrderTotals(isUnj = isCustomerUnj(), dateStr = (pickupDateInput ? pickupDateInput.value : '')){
   let subtotal = 0;
   let total = 0;
   let discount = 0;
@@ -85,7 +101,7 @@ function calculateOrderTotals(isUnj = isCustomerUnj()){
     const p = PRODUCTS.find(prod => prod.id === id);
     if (p && qty > 0){
       const regTotal = p.price * qty;
-      const effPrice = getEffectivePrice(p, isUnj);
+      const effPrice = getEffectivePrice(p, isUnj, dateStr);
       const effTotal = effPrice * qty;
       subtotal += regTotal;
       total += effTotal;
@@ -97,7 +113,7 @@ function calculateOrderTotals(isUnj = isCustomerUnj()){
 }
 
 function cartTotal(){
-  return calculateOrderTotals(isCustomerUnj()).total;
+  return calculateOrderTotals(isCustomerUnj(), (pickupDateInput ? pickupDateInput.value : '')).total;
 }
 function cartCount(){
   return Object.values(cart).reduce((a,b) => a+b, 0);
@@ -164,7 +180,9 @@ let currentReceiptDataUrl = null;
 function renderCheckoutView(){
   const count = cartCount();
   const isUnj = isCustomerUnj();
-  const { subtotal, discount, total } = calculateOrderTotals(isUnj);
+  const selectedDate = pickupDateInput ? pickupDateInput.value : '';
+  const isPromoActive = isUnj && isDateInUnjPromoPeriod(selectedDate);
+  const { subtotal, discount, total } = calculateOrderTotals(isUnj, selectedDate);
   const needsDp = total >= DP_THRESHOLD;
   const dpMinAmount = needsDp ? Math.round(total * DP_PERCENT) : 0;
 
@@ -187,8 +205,8 @@ function renderCheckoutView(){
   checkoutItemsList.innerHTML = Object.entries(cart).map(([id, qty]) => {
     const p = PRODUCTS.find(p => p.id === id);
     if (!p) return '';
-    const effPrice = getEffectivePrice(p, isUnj);
-    const hasDiscount = isUnj && effPrice < p.price;
+    const effPrice = getEffectivePrice(p, isUnj, selectedDate);
+    const hasDiscount = isPromoActive && effPrice < p.price;
     const rowTotal = effPrice * qty;
     const origRowTotal = p.price * qty;
 
@@ -245,7 +263,7 @@ function renderCheckoutView(){
   let breakdownHtml = Object.entries(cart).map(([id, qty]) => {
     const p = PRODUCTS.find(p => p.id === id);
     if (!p) return '';
-    const effPrice = getEffectivePrice(p, isUnj);
+    const effPrice = getEffectivePrice(p, isUnj, selectedDate);
     return `
       <div class="checkout-sum-row">
         <span>${p.name} (${qty}x)</span>
@@ -254,7 +272,7 @@ function renderCheckoutView(){
     `;
   }).join('');
 
-  if (isUnj && discount > 0) {
+  if (isPromoActive && discount > 0) {
     breakdownHtml += `
       <div class="summary-promo-callout">
         <div class="promo-callout-header">
@@ -290,7 +308,7 @@ function renderCheckoutView(){
 
   const mobileBarPromoHint = document.getElementById('mobileBarPromoHint');
   if (mobileBarPromoHint) {
-    if (isUnj && discount > 0) {
+    if (isPromoActive && discount > 0) {
       mobileBarPromoHint.style.display = 'block';
       mobileBarPromoHint.textContent = `Hemat ${formatRupiah(discount)} (Promo UNJ)`;
     } else {
@@ -327,13 +345,90 @@ function removeItem(id){
 }
 
 // ---------- Form Behavior ----------
+// Update card notifikasi promo UNJ dinamis sesuai tanggal yang dipilih
+function updateUnjPromoNotice(){
+  const unjPromoNotice = document.getElementById('unjPromoNotice');
+  if (!unjPromoNotice) return;
+  const isUnj = isCustomerUnj();
+  if (!isUnj) {
+    unjPromoNotice.style.display = 'none';
+    return;
+  }
+  unjPromoNotice.style.display = 'flex';
+
+  const selectedDate = pickupDateInput ? pickupDateInput.value : '';
+  if (selectedDate) {
+    if (isDateInUnjPromoPeriod(selectedDate)) {
+      unjPromoNotice.className = 'unj-promo-alert-card is-active';
+      unjPromoNotice.innerHTML = `
+        <div class="unj-promo-alert-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="5" x2="5" y2="19"></line>
+            <circle cx="6.5" cy="6.5" r="2.5"></circle>
+            <circle cx="17.5" cy="17.5" r="2.5"></circle>
+          </svg>
+        </div>
+        <div class="unj-promo-alert-info">
+          <strong>Promo Khusus UNJ Aktif! (1–14 Oktober)</strong>
+          <p>Harga promo mahasiswa UNJ otomatis diterapkan pada keranjangmu: Cookies 6K, Brownies 5K, Loyang 80K.</p>
+        </div>
+      `;
+    } else {
+      unjPromoNotice.className = 'unj-promo-alert-card is-expired';
+      unjPromoNotice.innerHTML = `
+        <div class="unj-promo-alert-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="unj-promo-alert-info">
+          <strong>Promo UNJ Tidak Berlaku untuk Tanggal Ini</strong>
+          <p>Promo mahasiswa UNJ hanya berlaku untuk tanggal pengambilan <strong>1–14 Oktober</strong>. Pesanan pada tanggal <strong>${formatDateID(selectedDate)}</strong> menggunakan harga reguler.</p>
+        </div>
+      `;
+    }
+  } else {
+    const isTodayInPromo = isDateInUnjPromoPeriod();
+    if (isTodayInPromo) {
+      unjPromoNotice.className = 'unj-promo-alert-card is-active';
+      unjPromoNotice.innerHTML = `
+        <div class="unj-promo-alert-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="5" x2="5" y2="19"></line>
+            <circle cx="6.5" cy="6.5" r="2.5"></circle>
+            <circle cx="17.5" cy="17.5" r="2.5"></circle>
+          </svg>
+        </div>
+        <div class="unj-promo-alert-info">
+          <strong>Promo Khusus UNJ (1–14 Oktober)</strong>
+          <p>Pilih tanggal pengambilan antara <strong>1–14 Oktober</strong> untuk mendapatkan potongan harga spesial mahasiswa UNJ.</p>
+        </div>
+      `;
+    } else {
+      unjPromoNotice.className = 'unj-promo-alert-card is-expired';
+      unjPromoNotice.innerHTML = `
+        <div class="unj-promo-alert-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="unj-promo-alert-info">
+          <strong>Periode Promo UNJ Telah Berakhir</strong>
+          <p>Promo mahasiswa UNJ berlaku pada 1–14 Oktober. Pesanan saat ini akan diproses dengan harga normal.</p>
+        </div>
+      `;
+    }
+  }
+}
+
 // Toggle Mahasiswa UNJ vs Umum
 function handleStatusChange(){
   const isUnj = isCustomerUnj();
-  const unjPromoNotice = document.getElementById('unjPromoNotice');
-  if (unjPromoNotice) {
-    unjPromoNotice.style.display = isUnj ? 'flex' : 'none';
-  }
+  updateUnjPromoNotice();
 
   if (isUnj) {
     unjFields.style.display = 'grid';
@@ -402,6 +497,10 @@ function initDateConstraint(){
         disableMobile: true,
         monthSelectorType: 'static',
         allowInput: false,
+        onChange: function(selectedDates, dateStr) {
+          updateUnjPromoNotice();
+          renderCheckoutView();
+        },
         onReady: function(selectedDates, dateStr, instance) {
           if (instance.altInput) {
             instance.altInput.setAttribute('inputmode', 'none');
@@ -443,6 +542,16 @@ function initDateConstraint(){
   } else {
     pickupDateInput.value = '';
   }
+
+  // Listener native input jika Flatpickr tidak digunakan
+  pickupDateInput.addEventListener('change', () => {
+    updateUnjPromoNotice();
+    renderCheckoutView();
+  });
+  pickupDateInput.addEventListener('input', () => {
+    updateUnjPromoNotice();
+    renderCheckoutView();
+  });
 }
 
 // Summary & Mobile submit buttons trigger form submit
@@ -488,7 +597,8 @@ checkoutOrderForm.addEventListener('submit', e => {
   const notes = document.getElementById('notes').value.trim();
 
   const isUnj = isCustomerUnj();
-  const { subtotal, discount, total } = calculateOrderTotals(isUnj);
+  const isPromoActive = isUnj && isDateInUnjPromoPeriod(pickupDate);
+  const { subtotal, discount, total } = calculateOrderTotals(isUnj, pickupDate);
   const needsDp = total >= DP_THRESHOLD;
   const dpMinAmount = needsDp ? Math.round(total * DP_PERCENT) : 0;
   const orderCode = generateOrderCode(pickupDate);
@@ -498,16 +608,17 @@ checkoutOrderForm.addEventListener('submit', e => {
     pickupMethod, deliveryAddress,
     pickupDate, pickupTime, payMethod, notes,
     isUnj,
+    isPromoActive,
     items: Object.entries(cart).map(([id, qty]) => {
       const p = PRODUCTS.find(p => p.id === id);
-      const effPrice = getEffectivePrice(p, isUnj);
+      const effPrice = getEffectivePrice(p, isUnj, pickupDate);
       return {
         id: p.id,
         name: p.name,
         qty,
         originalPrice: p.price,
         price: effPrice,
-        isPromo: isUnj && effPrice < p.price,
+        isPromo: isPromoActive && effPrice < p.price,
         subtotal: effPrice * qty
       };
     }),
@@ -801,7 +912,7 @@ function buildWaMessage(o){
   msg += `${divider}\n`;
   msg += `No. Order : #${o.orderCode}\n`;
   msg += `Nama      : ${o.fullName}\n`;
-  msg += `Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' (Promo 1–14 Okt)' : ''}\n`;
+  msg += `Tipe      : ${o.pemesanType}${o.isPromoActive ? ' (Promo 1–14 Okt)' : ''}\n`;
 
   if (o.pemesanType === 'Mahasiswa UNJ'){
     msg += `Prodi     : ${o.prodi || '-'}\n`;

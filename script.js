@@ -50,7 +50,23 @@ const PRODUCTS = [
 const WA_NUMBER = '6282320538422';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
-const IS_UNJ_PROMO_ACTIVE = true; // Periode Promo UNJ: 1–14 Oktober
+
+// Cek apakah tanggal berada dalam periode Promo UNJ (1–14 Oktober)
+function isDateInUnjPromoPeriod(dateStr){
+  if (!dateStr) {
+    const now = new Date();
+    return (now.getMonth() === 9 && now.getDate() >= 1 && now.getDate() <= 14);
+  }
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
+    return month === 10 && day >= 1 && day <= 14;
+  }
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d.getTime())) return false;
+  return d.getMonth() === 9 && d.getDate() >= 1 && d.getDate() <= 14;
+}
 
 // ---------- State ----------
 let cart = {}; // id -> qty
@@ -107,22 +123,24 @@ function generateOrderCode(pickupDate){
 let menuAlreadyRevealed = false;
 const menuGrid = document.getElementById('menuGrid');
 function renderMenu(){
+  const isPromoActive = isDateInUnjPromoPeriod();
   menuGrid.innerHTML = PRODUCTS.map(p => {
     const qty = cart[p.id] || 0;
     // Always keep reveal-item class so CSS transition is defined.
     // Add is-visible immediately if section already scrolled into view.
     const revealClass = menuAlreadyRevealed ? 'reveal-item is-visible' : 'reveal-item';
-    const displayPrice = p.unjPrice || p.price;
+    const displayPrice = (isPromoActive && p.unjPrice) ? p.unjPrice : p.price;
+    const hasPromo = isPromoActive && Boolean(p.unjPrice);
     return `
     <div class="menu-card ${revealClass}" data-id="${p.id}">
       <div class="menu-card-img-wrap ${p.imgClass}">
-        ${p.unjPrice ? `<span class="menu-promo-badge">Promo UNJ 1–14 Okt</span>` : ''}
+        ${hasPromo ? `<span class="menu-promo-badge">Promo UNJ 1–14 Okt</span>` : ''}
         <img src="${p.img}" alt="${p.name}">
       </div>
       <h3>${p.name}</h3>
       <div class="price-box">
         <span class="price-promo">${formatRupiah(displayPrice)}</span>
-        ${p.unjPrice ? `<s class="price-reguler">${formatRupiah(p.price)}</s><span class="price-unj-label">Khusus UNJ</span>` : ''}
+        ${hasPromo ? `<s class="price-reguler">${formatRupiah(p.price)}</s><span class="price-unj-label">Khusus UNJ</span>` : ''}
       </div>
       <p class="desc">${p.desc}</p>
       <div class="qty-row">
@@ -678,8 +696,8 @@ function buildWaMessage(o){
   let msg = `*CROONIES - PESANAN*\n`;
   msg += `${divider}\n`;
   msg += `No. Order : #${o.orderCode}\n`;
-  msg += `Nama      : ${o.fullName}\n`;
-  msg += `Tipe      : ${o.pemesanType}${o.pemesanType === 'Mahasiswa UNJ' ? ' (Promo 1–14 Okt)' : ''}\n`;
+  const isPromoActive = o.pemesanType === 'Mahasiswa UNJ' && isDateInUnjPromoPeriod(o.pickupDate);
+  msg += `Tipe      : ${o.pemesanType}${isPromoActive ? ' (Promo 1–14 Okt)' : ''}\n`;
 
   if (o.pemesanType === 'Mahasiswa UNJ'){
     msg += `Prodi     : ${o.prodi || '-'}\n`;

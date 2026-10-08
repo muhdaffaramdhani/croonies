@@ -975,6 +975,23 @@ span.flatpickr-weekday {
   line-height: 1.4;
 }
 
+/* Inactive/Expired UNJ Promo Card */
+.unj-promo-alert-card.is-expired {
+  background: linear-gradient(135deg, #FFF9F6 0%, #FAEDE8 100%);
+  border-color: #E2A69A;
+  box-shadow: 0 3px 10px rgba(184, 80, 66, 0.08);
+}
+.unj-promo-alert-card.is-expired .unj-promo-alert-icon {
+  background: rgba(184, 80, 66, 0.12);
+  color: #B85042;
+}
+.unj-promo-alert-card.is-expired .unj-promo-alert-info strong {
+  color: #B85042;
+}
+.unj-promo-alert-card.is-expired .unj-promo-alert-info p {
+  color: var(--brown);
+}
+
 /* Item Card with Active Promo */
 .checkout-item-card.has-unj-promo {
   border-color: rgba(124, 31, 42, 0.32);
