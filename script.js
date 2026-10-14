@@ -4,7 +4,6 @@ const PRODUCTS = [
     id: 'cookie-original',
     name: 'Soft Cookies Original',
     price: 7000,
-    unjPrice: 6000,
     img: 'assets/cookies_original.png',
     imgClass: 'original',
     desc: 'Cookies original dengan potongan dark chocolate chunks.'
@@ -13,7 +12,6 @@ const PRODUCTS = [
     id: 'cookie-matcha',
     name: 'Soft Cookies Matcha',
     price: 7000,
-    unjPrice: 6000,
     img: 'assets/cookies_matcha.png',
     imgClass: 'matcha',
     desc: 'Cookies matcha dengan potongan dark chocolate chunks.'
@@ -22,7 +20,6 @@ const PRODUCTS = [
     id: 'cookie-redvelvet',
     name: 'Soft Cookies Red Velvet',
     price: 7000,
-    unjPrice: 6000,
     img: 'assets/cookies_red_velvet.png',
     imgClass: 'redvelvet',
     desc: 'Cookies Red velvet dengan potongan white chocolate.'
@@ -31,7 +28,6 @@ const PRODUCTS = [
     id: 'cheese-brownies',
     name: 'Cheese Brownies',
     price: 6000,
-    unjPrice: 5000,
     img: 'assets/cheese_brownies.png',
     imgClass: 'brownies',
     desc: 'Brownies fudgy dengan lapisan cheese di atasnya, per potong.'
@@ -40,7 +36,6 @@ const PRODUCTS = [
     id: 'cheese-brownies-loyang',
     name: 'Cheese Brownies Loyang',
     price: 96000,
-    unjPrice: 80000,
     img: 'assets/cheese_brownies_loyang.png',
     imgClass: 'loyang',
     desc: 'Satu loyang penuh cheese brownies ukuran 20x20 (kurang lebih 16 pcs potong), pas untuk berbagi rame-rame.'
@@ -50,23 +45,6 @@ const PRODUCTS = [
 const WA_NUMBER = '6282320538422';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
-
-// Cek apakah tanggal berada dalam periode Promo UNJ (1–14 Oktober)
-function isDateInUnjPromoPeriod(dateStr){
-  if (!dateStr) {
-    const now = new Date();
-    return (now.getMonth() === 9 && now.getDate() >= 1 && now.getDate() <= 14);
-  }
-  const parts = dateStr.split('-');
-  if (parts.length === 3) {
-    const month = parseInt(parts[1], 10);
-    const day = parseInt(parts[2], 10);
-    return month === 10 && day >= 1 && day <= 14;
-  }
-  const d = new Date(dateStr + 'T00:00:00');
-  if (isNaN(d.getTime())) return false;
-  return d.getMonth() === 9 && d.getDate() >= 1 && d.getDate() <= 14;
-}
 
 // ---------- State ----------
 let cart = {}; // id -> qty
@@ -123,25 +101,18 @@ function generateOrderCode(pickupDate){
 let menuAlreadyRevealed = false;
 const menuGrid = document.getElementById('menuGrid');
 function renderMenu(){
-  const isPromoActive = isDateInUnjPromoPeriod();
   menuGrid.innerHTML = PRODUCTS.map(p => {
     const qty = cart[p.id] || 0;
     // Always keep reveal-item class so CSS transition is defined.
     // Add is-visible immediately if section already scrolled into view.
     const revealClass = menuAlreadyRevealed ? 'reveal-item is-visible' : 'reveal-item';
-    const displayPrice = (isPromoActive && p.unjPrice) ? p.unjPrice : p.price;
-    const hasPromo = isPromoActive && Boolean(p.unjPrice);
     return `
     <div class="menu-card ${revealClass}" data-id="${p.id}">
       <div class="menu-card-img-wrap ${p.imgClass}">
-        ${hasPromo ? `<span class="menu-promo-badge">Promo UNJ 1–14 Okt</span>` : ''}
         <img src="${p.img}" alt="${p.name}">
       </div>
       <h3>${p.name}</h3>
-      <div class="price-box">
-        <span class="price-promo">${formatRupiah(displayPrice)}</span>
-        ${hasPromo ? `<s class="price-reguler">${formatRupiah(p.price)}</s><span class="price-unj-label">Khusus UNJ</span>` : ''}
-      </div>
+      <div class="price">${formatRupiah(p.price)}</div>
       <p class="desc">${p.desc}</p>
       <div class="qty-row">
         <div class="qty-control">
@@ -149,7 +120,7 @@ function renderMenu(){
           <span>${qty}</span>
           <button class="inc" aria-label="Tambah">&plus;</button>
         </div>
-        ${qty === 0 ? `<button class="add-btn">Tambah</button>` : `<span style="font-size:12px;color:var(--brown);font-weight:600;">${formatRupiah(displayPrice*qty)}</span>`}
+        ${qty === 0 ? `<button class="add-btn">Tambah</button>` : `<span style="font-size:12px;color:var(--brown);font-weight:600;">${formatRupiah(p.price*qty)}</span>`}
       </div>
     </div>`;
   }).join('');
@@ -696,8 +667,7 @@ function buildWaMessage(o){
   let msg = `*CROONIES - PESANAN*\n`;
   msg += `${divider}\n`;
   msg += `No. Order : #${o.orderCode}\n`;
-  const isPromoActive = o.pemesanType === 'Mahasiswa UNJ' && isDateInUnjPromoPeriod(o.pickupDate);
-  msg += `Tipe      : ${o.pemesanType}${isPromoActive ? ' (Promo 1–14 Okt)' : ''}\n`;
+  msg += `Tipe      : ${o.pemesanType}\n`;
 
   if (o.pemesanType === 'Mahasiswa UNJ'){
     msg += `Prodi     : ${o.prodi || '-'}\n`;
