@@ -42,7 +42,7 @@ const PRODUCTS = [
   }
 ];
 
-const WA_NUMBER = '6282320538422';
+const WA_NUMBER = '6285128055064';
 const DP_THRESHOLD = 100000;
 const DP_PERCENT = 0.5;
 
